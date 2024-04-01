@@ -1,0 +1,26 @@
+{
+  "name": "@expass/core",
+  "version": "0.1.0",
+  "description": "> TODO: description",
+  "author": "Exos <oscar@gentisoft.com>",
+  "homepage": "https://github.com/expass/expass",
+  "license": "GPL-2.0",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "npx jest",
+    "build": "npx tsc -b"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "verbose": true,
+    "collectCoverage": true,
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "lib/"
+    ],
+    "transform": {
+      ".*\\.ts$": "ts-jest"
+    }
+  }
+
+}

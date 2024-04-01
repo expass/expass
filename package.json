@@ -1,0 +1,35 @@
+{
+  "name": "@expass/root",
+  "version": "0.1.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "description": "Password encoder library, with salt + pepper and anti-paralization protection",
+  "scripts": {
+    "test": "npx lerna run test",
+    "build": "npx lerna run build",
+    "lerna": "npx lerna"
+  },
+  "keywords": [
+    "password",
+    "hash",
+    "script"
+  ],
+  "author": "Exos <oscar@gentisoft.com>",
+  "homepage": "https://github.com/expass/expass",
+  "license": "GPL-2.0",
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.12.2",
+    "jest": "^29.7.0",
+    "lerna": "^8.1.2",
+    "npm-check-updates": "^16.14.18",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.3"
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.2.2",
+    "tsyringe": "^4.8.0"
+  }
+}
