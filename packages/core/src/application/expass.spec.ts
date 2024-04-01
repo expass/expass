@@ -306,7 +306,8 @@ describe('ExPass', () => {
             expect(encoderMock.encode).toHaveBeenCalledWith(
                 expect.any(Buffer),
                 expect.any(Buffer),
-                8
+                8,
+                64
             );
 
             expect(cipherMock.encrypt).toHaveBeenCalledTimes(1);
@@ -501,6 +502,24 @@ describe('ExPass', () => {
                 Buffer.from('secret'),
                 { ...DefaultConfig }
             )).rejects.toThrow('Salt length mismatch: 16 !== 24');
+        });
+
+        it('Should throw an error if minEncodeBlockSize is to low', async () => {
+            await expect(expass.compare(
+                'password123',
+                '$expass$$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
+                Buffer.from('secret'),
+                { ...DefaultConfig, minEncodeBlockSize: 128 }
+            )).rejects.toThrow('Encode block size is too low: 64');
+        });
+
+        it('Should throw an error if maxEncodeBlockSize is to high', async () => {
+            await expect(expass.compare(
+                'password123',
+                '$expass$$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
+                Buffer.from('secret'),
+                { ...DefaultConfig, maxEncodeBlockSize: 32 }
+            )).rejects.toThrow('Encode block size is too high: 64');
         });
 
     });

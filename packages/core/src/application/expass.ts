@@ -83,6 +83,7 @@ export class ExPass implements ExPassInterface {
             preHash,
             secretSalt,
             config.power,
+            config.encodeBlockSize,
         );
 
         return postHasher.hash(encoded);
@@ -144,6 +145,7 @@ export class ExPass implements ExPassInterface {
             postHashAlgorithm,
             saltLength,
             power,
+            encodeBlockSize,
             keyDerivationAlgorithm,
             keyDerivationIterations,
             cipherAlgorithm,
@@ -179,6 +181,14 @@ export class ExPass implements ExPassInterface {
 
         if (config.maxPower && power > config.maxPower) {
             throw new Error(`Power is too high: ${power}`);
+        }
+
+        if (config.minEncodeBlockSize && encodeBlockSize < config.minEncodeBlockSize) {
+            throw new Error(`Encode block size is too low: ${encodeBlockSize}`);
+        }
+
+        if (config.maxEncodeBlockSize && encodeBlockSize > config.maxEncodeBlockSize) {
+            throw new Error(`Encode block size is too high: ${encodeBlockSize}`);
         }
 
         if (config.minKeyDerivationIterations && keyDerivationIterations < config.minKeyDerivationIterations) {

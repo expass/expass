@@ -18,6 +18,7 @@ export const configMap: Record<ConfigFlag, ResumedExPassConfigFlag> = {
     postHashAlgorithm: 'poa',
     saltLength: 'sl',
     power: 'p',
+    encodeBlockSize: 'ebs',
     keyDerivationAlgorithm: 'kda',
     keyDerivationIterations: 'kdi',
     cipherAlgorithm: 'ca',

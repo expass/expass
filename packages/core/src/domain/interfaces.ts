@@ -8,6 +8,7 @@ export interface ExPassConfig {
     postHashAlgorithm: HashAlgorithm;
     saltLength: number;
     power: number;
+    encodeBlockSize: number;
     keyDerivationAlgorithm: HashAlgorithm;
     keyDerivationIterations: number;
     cipherAlgorithm: CipherAlgorithm;
@@ -22,6 +23,8 @@ export interface ExPassConfigParams extends Partial<ExPassConfig> {
     maxSaltLength?: number | null;
     minPower?: number | null;
     maxPower?: number | null;
+    minEncodeBlockSize?: number | null;
+    maxEncodeBlockSize?: number | null;
     minKeyDerivationIterations?: number | null;
     maxKeyDerivationIterations?: number | null;
 }
@@ -37,6 +40,7 @@ export interface ResumedExPassConfig {
     poa?: ConfigFlagTypeRef<'postHashAlgorithm'>;
     sl?:  ConfigFlagTypeRef<'saltLength'>;
     p?:   ConfigFlagTypeRef<'power'>;
+    ebs?: ConfigFlagTypeRef<'encodeBlockSize'>;
     kda?: ConfigFlagTypeRef<'keyDerivationAlgorithm'>;
     kdi?: ConfigFlagTypeRef<'keyDerivationIterations'>;
     ca?:  ConfigFlagTypeRef<'cipherAlgorithm'>;

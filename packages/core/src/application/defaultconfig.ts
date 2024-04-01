@@ -6,6 +6,7 @@ export const DefaultConfig: ExPassConfig = {
     postHashAlgorithm: 'sha256',
     saltLength: 16,
     power: 8,
+    encodeBlockSize: 64,
     keyDerivationAlgorithm: 'sha256',
     keyDerivationIterations: 10000,
     cipherAlgorithm: 'aes-256'

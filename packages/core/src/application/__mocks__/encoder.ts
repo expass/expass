@@ -4,13 +4,13 @@ import { fakeHash } from './fakehash';
 
 export interface MockInterface {
     length: number,
-    encode: jest.Mock<Buffer, [Buffer, Buffer, number]>,
+    encode: jest.Mock<Buffer, [Buffer, Buffer, number, number]>,
     clear: () => void,
 }
 
 export const __mock: MockInterface = {
     length: 64,
-    encode: jest.fn((data: Buffer, salt: Buffer, power: number) => fakeHash(Buffer.concat([data, salt]), __mock.length)),
+    encode: jest.fn((data: Buffer, salt: Buffer, power: number, length: number) => fakeHash(Buffer.concat([data, salt]), __mock.length)),
     clear: () => {
         __mock.encode.mockClear();
     },
@@ -18,8 +18,8 @@ export const __mock: MockInterface = {
 
 export class MockEncoder implements Encoder {
 
-    encode(data: Buffer, salt: Buffer, power: number): Promise<Buffer> {
-        return Promise.resolve(__mock.encode(data, salt, power));
+    encode(data: Buffer, salt: Buffer, power: number, length: number): Promise<Buffer> {
+        return Promise.resolve(__mock.encode(data, salt, power, length));
     }
 
 }
