@@ -1,5 +1,7 @@
 
+import 'reflect-metadata';
 import QS from 'querystring';
+import { singleton } from 'tsyringe';
 import { 
     ExPassPackage,
     ExPassConfig,
@@ -29,6 +31,7 @@ type ExtratedConfig = Partial<ExPassConfig>;
 /**
  * Pack/Unpack password hashes
  */
+@singleton()
 export class Packager implements PackagerInterface {
 
     protected _cleanBase64(str: string): string {
