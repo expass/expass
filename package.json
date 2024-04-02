@@ -1,12 +1,14 @@
 {
   "name": "@expass/root",
   "version": "0.1.0",
+  "private": true,
   "workspaces": [
     "packages/*"
   ],
   "description": "Password encoder library, with salt + pepper and anti-paralization protection",
   "scripts": {
     "test": "npx lerna run test",
+    "clean": "npx lerna run clean",
     "build": "npx lerna run build",
     "lerna": "npx lerna"
   },
@@ -28,6 +30,7 @@
     "jest": "^29.7.0",
     "lerna": "^8.1.2",
     "npm-check-updates": "^16.14.18",
+    "rimraf": "^5.0.5",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.3"

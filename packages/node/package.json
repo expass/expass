@@ -15,7 +15,8 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "npx jest",
-    "build": "npx tsc -b"
+    "clean": "npx rimraf lib",
+    "build": "npm run clean && npx tsc -b"
   },
   "dependencies": {
     "@expass/core": "*"
