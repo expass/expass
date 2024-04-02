@@ -68,7 +68,7 @@ const SECRET = 'Q6I1BIPZhTbd6G7XjVedePfUV3TllC';
     const encrypted = await expass.encode(password);
     // $expass$UUJpNU11MUxuNGd...
 
-    const isValid = await expass.compare(password, encrypted);
+    const isValid = await expass.verify(password, encrypted);
 )();
 ```
 
