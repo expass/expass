@@ -1,6 +1,6 @@
 
 import 'reflect-metadata';
-import { injectable, inject } from 'tsyringe';
+import { injectable, inject, singleton } from 'tsyringe';
 import { DefaultConfig } from './defaultconfig';
 import { 
     ExPassConfig,
@@ -17,6 +17,7 @@ import { Hasher } from '../domain/hasher';
 import { Cipher } from '../domain/cipher';
 
 @injectable()
+@singleton()
 export class ExPass implements ExPassInterface {
 
     constructor(
