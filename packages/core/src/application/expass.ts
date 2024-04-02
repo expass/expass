@@ -9,6 +9,7 @@ import {
     CipherAlgorithm,
     KeyAndIv,
 } from '../domain/interfaces';
+import { ExPassVersionMismatchError, ExPassForbidenParamValueError } from './errors';
 import { ExPass as ExPassInterface } from '../domain/expass';
 import { Encoder } from '../domain/encoder';
 import { Packager } from '../domain/packager';
@@ -163,59 +164,59 @@ export class ExPass implements ExPassInterface {
         } = finalConfig;
 
         if (version !== this.version) {
-            throw new Error(`Invalid version: ${version}`);
+            throw new ExPassVersionMismatchError(`Invalid version: ${version}`);
         }
 
         if (config.allowPreHashAlgorithms && !config.allowPreHashAlgorithms.includes(preHashAlgorithm)) {
-            throw new Error(`Not allowed preHashAlgorithm: ${preHashAlgorithm}`);
+            throw new ExPassForbidenParamValueError(`Not allowed preHashAlgorithm: ${preHashAlgorithm}`);
         } 
 
         if (config.allowPostHashAlgorithms && !config.allowPostHashAlgorithms.includes(postHashAlgorithm)) {
-            throw new Error(`Not allowed postHashAlgorithm: ${postHashAlgorithm}`);
+            throw new ExPassForbidenParamValueError(`Not allowed postHashAlgorithm: ${postHashAlgorithm}`);
         }
 
         if (config.allowKeyDerivationAlgorithms && !config.allowKeyDerivationAlgorithms.includes(keyDerivationAlgorithm)) {
-            throw new Error(`Not allowed keyDerivationAlgorithm: ${keyDerivationAlgorithm}`);
+            throw new ExPassForbidenParamValueError(`Not allowed keyDerivationAlgorithm: ${keyDerivationAlgorithm}`);
         }
 
         if (config.allowCipherAlgorithms && !config.allowCipherAlgorithms.includes(cipherAlgorithm)) {
-            throw new Error(`Not allowed cipherAlgorithm: ${cipherAlgorithm}`);
+            throw new ExPassForbidenParamValueError(`Not allowed cipherAlgorithm: ${cipherAlgorithm}`);
         }
 
         if (config.minSaltLength && saltLength < config.minSaltLength) {
-            throw new Error(`Salt length is too short: ${saltLength}`);
+            throw new ExPassForbidenParamValueError(`Salt length is too short: ${saltLength}`);
         }
 
         if (config.maxSaltLength && saltLength > config.maxSaltLength) {
-            throw new Error(`Salt length is too long: ${saltLength}`);
+            throw new ExPassForbidenParamValueError(`Salt length is too long: ${saltLength}`);
         }
 
         if (config.minPower && power < config.minPower) {
-            throw new Error(`Power is too low: ${power}`);
+            throw new ExPassForbidenParamValueError(`Power is too low: ${power}`);
         }
 
         if (config.maxPower && power > config.maxPower) {
-            throw new Error(`Power is too high: ${power}`);
+            throw new ExPassForbidenParamValueError(`Power is too high: ${power}`);
         }
 
         if (config.minEncodeBlockSize && encodeBlockSize < config.minEncodeBlockSize) {
-            throw new Error(`Encode block size is too low: ${encodeBlockSize}`);
+            throw new ExPassForbidenParamValueError(`Encode block size is too low: ${encodeBlockSize}`);
         }
 
         if (config.maxEncodeBlockSize && encodeBlockSize > config.maxEncodeBlockSize) {
-            throw new Error(`Encode block size is too high: ${encodeBlockSize}`);
+            throw new ExPassForbidenParamValueError(`Encode block size is too high: ${encodeBlockSize}`);
         }
 
         if (config.minKeyDerivationIterations && keyDerivationIterations < config.minKeyDerivationIterations) {
-            throw new Error(`Key derivation iterations is too low: ${keyDerivationIterations}`);
+            throw new ExPassForbidenParamValueError(`Key derivation iterations is too low: ${keyDerivationIterations}`);
         }
 
         if (config.maxKeyDerivationIterations && keyDerivationIterations > config.maxKeyDerivationIterations) {
-            throw new Error(`Key derivation iterations is too high: ${keyDerivationIterations}`);
+            throw new ExPassForbidenParamValueError(`Key derivation iterations is too high: ${keyDerivationIterations}`);
         }
 
         if (salt.length !== saltLength) {
-            throw new Error(`Salt length mismatch: ${salt.length} !== ${saltLength}`);
+            throw new ExPassForbidenParamValueError(`Salt length mismatch: ${salt.length} !== ${saltLength}`);
         }
 
         // Pre-salt password

@@ -13,6 +13,7 @@ import {
     ResumedExPassConfigFlag,
     ResumedExPassConfigFlagRef,
 } from '../domain/interfaces';
+import { ExPassInvalidHashError } from './errors';
 import { Packager as PackagerInterface } from '../domain/packager';
 import { DefaultConfig } from './defaultconfig';
 
@@ -85,7 +86,7 @@ export class Packager implements PackagerInterface {
             parts.length !== 5 ||
             parts[1] !== 'expass'
         ) {
-            throw new Error('Invalid hash format');
+            throw new ExPassInvalidHashError();
         }
 
         const [
@@ -97,7 +98,7 @@ export class Packager implements PackagerInterface {
         const readOps = QS.parse(opsStr);
 
         if (!('v' in readOps)) {
-            throw new Error('Invalid hash format');
+            throw new ExPassInvalidHashError();
         }
 
         const ops: ResumedExPassConfig = readOps as unknown as ResumedExPassConfig;
@@ -130,7 +131,7 @@ export class Packager implements PackagerInterface {
         const body = Buffer.from(this._fixBase64(bodyStr), 'base64');
 
         if (!salt.length || !body.length) {
-            throw new Error('Invalid hash format');
+            throw new ExPassInvalidHashError(); 
         }
 
         return { version, salt, body, config };
