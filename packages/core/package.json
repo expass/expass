@@ -27,5 +27,9 @@
     "transform": {
       ".*\\.ts$": "ts-jest"
     }
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.2.2",
+    "tsyringe": "^4.8.0"
   }
 }
