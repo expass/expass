@@ -1,8 +1,15 @@
 {
   "name": "@expass/node",
   "version": "0.1.0",
-  "description": "> TODO: description",
-  "author": "Exos <oscar@corporacioncapsula.io>",
+  "description": "A modern and secure password hashing/encription library for node",
+  "keywords": [
+    "password",
+    "hashing",
+    "encription",
+    "security",
+    "scrypt"
+  ],
+  "author": "Exos <oscar@gentisoft.com>",
   "homepage": "",
   "license": "GPL-2.0",
   "main": "lib/index.js",
