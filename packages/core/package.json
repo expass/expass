@@ -13,6 +13,9 @@
     "clean": "npx rimraf lib",
     "build": "npm run clean && npx tsc -b --force"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "jest": {
     "testEnvironment": "node",
     "verbose": true,

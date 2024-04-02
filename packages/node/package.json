@@ -20,6 +20,9 @@
     "clean": "npx rimraf lib",
     "build": "npm run clean && npx tsc -b --force"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@expass/core": "*"
   },
