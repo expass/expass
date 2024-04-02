@@ -40,16 +40,16 @@ export class Packager implements PackagerInterface {
 
     protected _cleanBase64(str: string): string {
         return str
-            .replace(/\+/, '.')
-            .replace(/\//, '_')
-            .replace(/=+$/, '');
+            .replace(/\+/g, '.')
+            .replace(/\//g, '_')
+            .replace(/=+$/g, '');
     }
 
     protected _fixBase64(str: string): string {
         return str
-            .replace(/\./, '+')
-            .replace(/_/, '/')
-            .replace(/=+$/, '');
+            .replace(/\./g, '+')
+            .replace(/_/g, '/')
+            .replace(/=+$/g, '');
     }
 
     pack(salt: Buffer, body: Buffer, versionedConfig: VersionedExPassConfig): string {
