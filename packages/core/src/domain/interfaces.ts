@@ -6,27 +6,27 @@ export type CipherAlgorithm = 'aes-128' | 'aes-256';
 export interface ExPassConfig {
     preHashAlgorithm: HashAlgorithm;
     postHashAlgorithm: HashAlgorithm;
+    hmacAlgorithm: HashAlgorithm;
     saltLength: number;
     power: number;
-    encodeBlockSize: number;
-    keyDerivationAlgorithm: HashAlgorithm;
-    keyDerivationIterations: number;
+    encodeHashLenght: number;
+    keyDerivationPower: number;
     cipherAlgorithm: CipherAlgorithm;
 }
 
 export interface ExPassConfigParams extends Partial<ExPassConfig> {
     allowPreHashAlgorithms?: HashAlgorithm[] | null;
     allowPostHashAlgorithms?: HashAlgorithm[] | null;
-    allowKeyDerivationAlgorithms?: HashAlgorithm[] | null;
     allowCipherAlgorithms?: CipherAlgorithm[] | null;
+    allowHmacAlgorithms?: HashAlgorithm[] | null;
     minSaltLength?: number | null;
     maxSaltLength?: number | null;
     minPower?: number | null;
     maxPower?: number | null;
-    minEncodeBlockSize?: number | null;
-    maxEncodeBlockSize?: number | null;
-    minKeyDerivationIterations?: number | null;
-    maxKeyDerivationIterations?: number | null;
+    minEncodeHashLength?: number | null;
+    maxEncodeHashLength?: number | null;
+    minKeyDerivationPower?: number | null;
+    maxKeyDerivationPower?: number | null;
 }
 
 export interface VersionedExPassConfig extends ExPassConfig {
@@ -43,11 +43,11 @@ export interface ResumedExPassConfig {
     v: string,
     pra?: ConfigFlagTypeRef<'preHashAlgorithm'>;
     poa?: ConfigFlagTypeRef<'postHashAlgorithm'>;
+    h?: ConfigFlagTypeRef<'hmacAlgorithm'>;
     sl?:  ConfigFlagTypeRef<'saltLength'>;
     p?:   ConfigFlagTypeRef<'power'>;
-    ebs?: ConfigFlagTypeRef<'encodeBlockSize'>;
-    kda?: ConfigFlagTypeRef<'keyDerivationAlgorithm'>;
-    kdi?: ConfigFlagTypeRef<'keyDerivationIterations'>;
+    el?: ConfigFlagTypeRef<'encodeHashLenght'>;
+    kp?: ConfigFlagTypeRef<'keyDerivationPower'>;
     ca?:  ConfigFlagTypeRef<'cipherAlgorithm'>;
 }
 

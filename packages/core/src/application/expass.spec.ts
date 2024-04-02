@@ -116,7 +116,7 @@ describe('ExPass', () => {
                 Buffer.from('salt'),
                 Buffer.from('prehash'),
                 Buffer.from('secret'),
-                { ...DefaultConfig, keyDerivationAlgorithm: 'sha1' }
+                { ...DefaultConfig, hmacAlgorithm: 'sha1' }
             );
             expect(cryptoMock.createHasher).toHaveBeenCalledTimes(1);
             expect(cryptoMock.createHasher).toHaveBeenCalledWith('sha1');
@@ -151,8 +151,8 @@ describe('ExPass', () => {
             expect(cryptoMock.derivateKey).toHaveBeenCalledWith(
                 Buffer.from('secretSalt'),
                 Buffer.from('secret'),
-                'sha256',
-                10000
+                'aes-256',
+                10
             );
             expect(result).toEqual({
                 key: Buffer.from('dGVyY2VzdGxhU3RlcmNlc3RlcmNlc3RsYVN0ZXJjZXM=', 'base64'),
@@ -160,35 +160,19 @@ describe('ExPass', () => {
             });
         });
 
-        it('Should call createHasher with the given algorithm', async () => {
+        it('Should call createHasher with the given params', async () => {
             await expass.derivateCipherKeyIv(
                 Buffer.from('secretSalt'),
                 Buffer.from('secret'),
-                { ...DefaultConfig, keyDerivationAlgorithm: 'sha1' }
+                { ...DefaultConfig, keyDerivationPower: 16, cipherAlgorithm: 'aes-128'}
             );
 
             expect(cryptoMock.derivateKey).toHaveBeenCalledTimes(1);
             expect(cryptoMock.derivateKey).toHaveBeenCalledWith(
                 Buffer.from('secretSalt'),
                 Buffer.from('secret'),
-                'sha1',
-                10000
-            );
-        });
-
-        it('Should call derivateKey with the given iterations', async () => {
-            await expass.derivateCipherKeyIv(
-                Buffer.from('secretSalt'),
-                Buffer.from('secret'),
-                { ...DefaultConfig, keyDerivationIterations: 3242 }
-            );
-
-            expect(cryptoMock.derivateKey).toHaveBeenCalledTimes(1);
-            expect(cryptoMock.derivateKey).toHaveBeenCalledWith(
-                Buffer.from('secretSalt'),
-                Buffer.from('secret'),
-                'sha256',
-                3242
+                'aes-128',
+                16
             );
         });
 
@@ -290,8 +274,8 @@ describe('ExPass', () => {
             expect(cryptoMock.derivateKey).toHaveBeenCalledWith(
                 expect.any(Buffer),
                 Buffer.from('secret'),
-                'sha256',
-                10000
+                'aes-256',
+                10
             );
 
             expect(cryptoMock.createCipher).toHaveBeenCalledTimes(1);
@@ -306,7 +290,7 @@ describe('ExPass', () => {
             expect(encoderMock.encode).toHaveBeenCalledWith(
                 expect.any(Buffer),
                 expect.any(Buffer),
-                8,
+                14,
                 64
             );
 
@@ -345,8 +329,8 @@ describe('ExPass', () => {
             expect(cryptoMock.derivateKey).toHaveBeenCalledWith(
                 expect.any(Buffer),
                 expect.any(Buffer),
-                'sha256',
-                10000
+                'aes-256',
+                10
             );
 
             // 32 / 3 * 4 = 42.6... 43 bytes in base64 (widhout padding)
@@ -432,13 +416,13 @@ describe('ExPass', () => {
             )).rejects.toThrow('Not allowed postHashAlgorithm: sha256');
         });
 
-        it('Should throw an error if keyDerivationAlgorithm is not allowed', async () => {
+        it('Should throw an error if hmacAlgorithm is not allowed', async () => {
             await expect(expass.compare(
                 'password123',
                 '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
-                { ...DefaultConfig, allowKeyDerivationAlgorithms: ['sha1'] }
-            )).rejects.toThrow('Not allowed keyDerivationAlgorithm: sha256');
+                { ...DefaultConfig, allowHmacAlgorithms: ['sha1'] }
+            )).rejects.toThrow('Not allowed hmacAlgorithm: sha256');
         });
 
         it('Should throw an error if cipherAlgorithm is not allowed', async () => {
@@ -474,7 +458,7 @@ describe('ExPass', () => {
                 '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
                 { ...DefaultConfig, minPower: 16 }
-            )).rejects.toThrow('Power is too low: 8');
+            )).rejects.toThrow('Power is too low: 14');
         });
 
         it('Should throw an error if power is to high', async () => {
@@ -483,25 +467,25 @@ describe('ExPass', () => {
                 '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
                 { ...DefaultConfig, maxPower: 4 }
-            )).rejects.toThrow('Power is too high: 8');
+            )).rejects.toThrow('Power is too high: 14');
         });
 
-        it('Should throw an error if keyDerivationIterations is to low', async () => {
+        it('Should throw an error if keyDerivationPower is to low', async () => {
             await expect(expass.compare(
                 'password123',
-                '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
+                '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
                 Buffer.from('secret'),
-                { ...DefaultConfig, minKeyDerivationIterations: 15000}
-            )).rejects.toThrow('Key derivation iterations is too low: 10000');
+                { ...DefaultConfig, minKeyDerivationPower: 16 }
+            )).rejects.toThrow('Key derivation power is too low: 10');
         });
 
-        it('Should throw an error if keyDerivationIterations is to high', async () => {
+        it('Should throw an error if keyDerivationPower is to high', async () => {
             await expect(expass.compare(
                 'password123',
-                '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
+                '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
                 Buffer.from('secret'),
-                { ...DefaultConfig, maxKeyDerivationIterations: 5000 }
-            )).rejects.toThrow('Key derivation iterations is too high: 10000');
+                { ...DefaultConfig, maxKeyDerivationPower: 4 }
+            )).rejects.toThrow('Key derivation power is too high: 10');
         });
 
         it('Should throw an error if salt length mismatch', async () => {
@@ -513,21 +497,21 @@ describe('ExPass', () => {
             )).rejects.toThrow('Salt length mismatch: 16 !== 24');
         });
 
-        it('Should throw an error if minEncodeBlockSize is to low', async () => {
+        it('Should throw an error if minEncodeHashLength is to low', async () => {
             await expect(expass.compare(
                 'password123',
                 '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
-                { ...DefaultConfig, minEncodeBlockSize: 128 }
+                { ...DefaultConfig, minEncodeHashLength: 128 }
             )).rejects.toThrow('Encode block size is too low: 64');
         });
 
-        it('Should throw an error if maxEncodeBlockSize is to high', async () => {
+        it('Should throw an error if maxEncodeHashLength is to high', async () => {
             await expect(expass.compare(
                 'password123',
                 '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
-                { ...DefaultConfig, maxEncodeBlockSize: 32 }
+                { ...DefaultConfig, maxEncodeHashLength: 32 }
             )).rejects.toThrow('Encode block size is too high: 64');
         });
 

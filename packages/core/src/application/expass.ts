@@ -47,7 +47,7 @@ export class ExPass implements ExPassInterface {
     }
 
     derivateSessionSalt(salt: Buffer ,preHash: Buffer, secret: Buffer, config: ExPassConfig): Buffer {
-        const hasher = this.crypto.createHasher(config.keyDerivationAlgorithm);
+        const hasher = this.crypto.createHasher(config.hmacAlgorithm);
         let secretSalt: Buffer = Buffer.alloc(0);
         // Add buffers until the salt was larger or equal to config
         while (secretSalt.length < config.saltLength) {
@@ -70,8 +70,8 @@ export class ExPass implements ExPassInterface {
         return this.crypto.derivateKey(
             secretSalt,
             secret,
-            config.keyDerivationAlgorithm,
-            config.keyDerivationIterations,
+            config.cipherAlgorithm,
+            config.keyDerivationPower
         );
     }
 
@@ -91,7 +91,7 @@ export class ExPass implements ExPassInterface {
             preHash,
             secretSalt,
             config.power,
-            config.encodeBlockSize,
+            config.encodeHashLenght,
         );
 
         return postHasher.hash(encoded);
@@ -155,11 +155,11 @@ export class ExPass implements ExPassInterface {
         const {
             preHashAlgorithm,
             postHashAlgorithm,
+            hmacAlgorithm,
             saltLength,
             power,
-            encodeBlockSize,
-            keyDerivationAlgorithm,
-            keyDerivationIterations,
+            encodeHashLenght,
+            keyDerivationPower,
             cipherAlgorithm,
         } = finalConfig;
 
@@ -175,8 +175,8 @@ export class ExPass implements ExPassInterface {
             throw new ExPassForbidenParamValueError(`Not allowed postHashAlgorithm: ${postHashAlgorithm}`);
         }
 
-        if (config.allowKeyDerivationAlgorithms && !config.allowKeyDerivationAlgorithms.includes(keyDerivationAlgorithm)) {
-            throw new ExPassForbidenParamValueError(`Not allowed keyDerivationAlgorithm: ${keyDerivationAlgorithm}`);
+        if (config.allowHmacAlgorithms && !config.allowHmacAlgorithms.includes(hmacAlgorithm)) {
+            throw new ExPassForbidenParamValueError(`Not allowed hmacAlgorithm: ${hmacAlgorithm}`);
         }
 
         if (config.allowCipherAlgorithms && !config.allowCipherAlgorithms.includes(cipherAlgorithm)) {
@@ -199,20 +199,20 @@ export class ExPass implements ExPassInterface {
             throw new ExPassForbidenParamValueError(`Power is too high: ${power}`);
         }
 
-        if (config.minEncodeBlockSize && encodeBlockSize < config.minEncodeBlockSize) {
-            throw new ExPassForbidenParamValueError(`Encode block size is too low: ${encodeBlockSize}`);
+        if (config.minEncodeHashLength && encodeHashLenght < config.minEncodeHashLength) {
+            throw new ExPassForbidenParamValueError(`Encode block size is too low: ${encodeHashLenght}`);
         }
 
-        if (config.maxEncodeBlockSize && encodeBlockSize > config.maxEncodeBlockSize) {
-            throw new ExPassForbidenParamValueError(`Encode block size is too high: ${encodeBlockSize}`);
+        if (config.maxEncodeHashLength && encodeHashLenght > config.maxEncodeHashLength) {
+            throw new ExPassForbidenParamValueError(`Encode block size is too high: ${encodeHashLenght}`);
         }
 
-        if (config.minKeyDerivationIterations && keyDerivationIterations < config.minKeyDerivationIterations) {
-            throw new ExPassForbidenParamValueError(`Key derivation iterations is too low: ${keyDerivationIterations}`);
+        if (config.minKeyDerivationPower && keyDerivationPower < config.minKeyDerivationPower) {
+            throw new ExPassForbidenParamValueError(`Key derivation power is too low: ${keyDerivationPower}`);
         }
 
-        if (config.maxKeyDerivationIterations && keyDerivationIterations > config.maxKeyDerivationIterations) {
-            throw new ExPassForbidenParamValueError(`Key derivation iterations is too high: ${keyDerivationIterations}`);
+        if (config.maxKeyDerivationPower && keyDerivationPower > config.maxKeyDerivationPower) {
+            throw new ExPassForbidenParamValueError(`Key derivation power is too high: ${keyDerivationPower}`);
         }
 
         if (salt.length !== saltLength) {

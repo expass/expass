@@ -22,11 +22,11 @@ type MapResumeFlag = keyof Omit<ResumedExPassConfig, 'v'>;
 export const configMap: Record<ConfigFlag, MapResumeFlag> = {
     preHashAlgorithm: 'pra',
     postHashAlgorithm: 'poa',
+    hmacAlgorithm: 'h',
     saltLength: 'sl',
     power: 'p',
-    encodeBlockSize: 'ebs',
-    keyDerivationAlgorithm: 'kda',
-    keyDerivationIterations: 'kdi',
+    encodeHashLenght: 'el',
+    keyDerivationPower: 'kp',
     cipherAlgorithm: 'ca',
 }
 
@@ -114,8 +114,8 @@ export class Packager implements PackagerInterface {
                     if (
                         k === 'saltLength' ||
                         k === 'power' ||
-                        k === 'keyDerivationIterations' ||
-                        k === 'encodeBlockSize'
+                        k === 'keyDerivationPower' ||
+                        k === 'encodeHashLenght'
                     ) {
                         value = parseInt(value as any, 10);
                     }

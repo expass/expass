@@ -43,17 +43,17 @@ describe('Packager', () => {
                 version: '1',
                 preHashAlgorithm: 'sha512',
                 postHashAlgorithm: 'sha512',
+                hmacAlgorithm: 'sha512',
                 saltLength: 32,
                 power: 10,
-                encodeBlockSize: 64,
-                keyDerivationAlgorithm: 'sha512',
-                keyDerivationIterations: 50000,
+                encodeHashLenght: 64,
+                keyDerivationPower: 16,
                 cipherAlgorithm: 'aes-128',
             };
             const packager = new Packager();
             const result = packager.pack(salt, body, config);
             expect(result).toBe(
-                '$expass$v=1&pra=sha512&poa=sha512&sl=32&p=10&kda=sha512&kdi=50000&ca=aes-128$c3Nzc3Nzc3Nzc3Nzc3Nzcw$eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eA'
+                '$expass$v=1&pra=sha512&poa=sha512&h=sha512&sl=32&p=10&kp=16&ca=aes-128$c3Nzc3Nzc3Nzc3Nzc3Nzcw$eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eA'
             );
         });
 
@@ -91,7 +91,7 @@ describe('Packager', () => {
         });
 
         it('Should unpack the string into a ExPassPackage with custom config', () => {
-            const data = '$expass$v=1&pra=sha512&poa=sha512&sl=32&p=10&kda=sha512&kdi=50000&ca=aes-128$c3Nzc3Nzc3Nzc3Nzc3Nzcw$eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eA';
+            const data = '$expass$v=1&pra=sha512&poa=sha512&h=sha512&sl=32&p=10&kda=sha512&kdi=50000&ca=aes-128$c3Nzc3Nzc3Nzc3Nzc3Nzcw$eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eA';
             const packager = new Packager();
             const result = packager.unpack(data);
             expect(result).toEqual({
@@ -101,11 +101,11 @@ describe('Packager', () => {
                 config: {
                     preHashAlgorithm: 'sha512',
                     postHashAlgorithm: 'sha512',
+                    hmacAlgorithm: 'sha512',
                     saltLength: 32,
                     power: 10,
-                    encodeBlockSize: 64,
-                    keyDerivationAlgorithm: 'sha512',
-                    keyDerivationIterations: 50000,
+                    encodeHashLenght: 64,
+                    keyDerivationPower: 10,
                     cipherAlgorithm: 'aes-128',
                 }
             });

@@ -11,7 +11,7 @@ interface MockInterface {
     createSalt: jest.Mock<Buffer, [number]>,
     createHasher: jest.Mock<Hasher<HashAlgorithm>, [HashAlgorithm]>,
     createCipher: jest.Mock<Cipher<CipherAlgorithm>, [CipherAlgorithm]>,
-    derivateKey: jest.Mock<Promise<KeyAndIv>, [Buffer, Buffer, HashAlgorithm, number]>,
+    derivateKey: jest.Mock<Promise<KeyAndIv>, [Buffer, Buffer, CipherAlgorithm, number]>,
     secureCompare: jest.Mock<boolean, [Buffer, Buffer]>,
     clear: () => void,
 }
@@ -20,7 +20,7 @@ export const __mock: MockInterface = {
     createSalt: jest.fn((length: number) => Buffer.alloc(length)),
     createHasher: jest.fn((algorithm: HashAlgorithm) => new MockHasher(algorithm)),
     createCipher: jest.fn((algorithm: CipherAlgorithm) => new MockCipher(algorithm)),
-    derivateKey: jest.fn((password: Buffer, salt: Buffer, algorithm: HashAlgorithm, iterations: number) => {
+    derivateKey: jest.fn((password: Buffer, salt: Buffer, algorithm: CipherAlgorithm, power: number) => {
         return Promise.resolve({
             key: fakeHash(Buffer.concat([password, salt]), 32),
             iv: fakeHash(Buffer.concat([salt, password]), 16),
@@ -50,8 +50,8 @@ export class MockCrypto implements Crypto {
         return __mock.createCipher(algorithm) as Cipher<A>;
     }
 
-    derivateKey(password: Buffer, salt: Buffer, algorithm: HashAlgorithm, iterations: number): Promise<KeyAndIv> {
-        return __mock.derivateKey(password, salt, algorithm, iterations);
+    derivateKey(password: Buffer, salt: Buffer, algorithm: CipherAlgorithm, power: number): Promise<KeyAndIv> {
+        return __mock.derivateKey(password, salt, algorithm, power);
     }
 
     secureCompare(a: Buffer, b: Buffer): boolean {

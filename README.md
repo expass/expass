@@ -74,16 +74,16 @@ const SECRET = 'Q6I1BIPZhTbd6G7XjVedePfUV3TllC';
 
 The options are:
 
-| Option                  | Type   | Description                                         | Default   |
-| ------                  | ----   | -----------                                         | -------   |
-| power                   | number | The power of the scrypt algorithm                   | 8         |
-| encodeBlcockSize        | number | The block size used to encode the password          | 64        |
-| saltLength              | number | The length of the salt used in the scrypt algorithm | 16        |
-| preHashAlgorithm        | string | The algorithm used to pre-hash the password         | 'sha256'  |
-| postHashAlgorithm       | string | The algorithm used to post-hash the password        | 'sha256'  |
-| keyDerivationAlgorithm  | string | The algorithm used to derive the key for encryption | 'sha256'  |
-| keyDerivationIterations | number | The number of iterations used to derive the key     | 100000    |
-| cipherAlgorithm         | string | The algorithm used to encrypt the password          | 'aes-256' |
+| Option             | Type   | Description                                         | Default   |
+| ------             | ----   | -----------                                         | -------   |
+| power              | number | The power of the scrypt algorithm                   | 14        |
+| encodeHashLenght   | number | The block size used to encode the password          | 64        |
+| saltLength         | number | The length of the salt used in the scrypt algorithm | 16        |
+| preHashAlgorithm   | string | The algorithm used to pre-hash the password         | 'sha256'  |
+| postHashAlgorithm  | string | The algorithm used to post-hash the password        | 'sha256'  |
+| hmacAlgorithm      | string | The algorithm used to generate the HMAC             | 'sha256'  |
+| keyDerivationPower | number | The power of the scrypt for simetric key derivation | 10        |
+| cipherAlgorithm    | string | The algorithm used to encrypt the password          | 'aes-256' |
 
 ### Available hash algorithms _(for this implementation)_
 
