@@ -350,7 +350,7 @@ describe('ExPass', () => {
             );
 
             // 32 / 3 * 4 = 42.6... 43 bytes in base64 (widhout padding)
-            expect(result).toMatch(/^\$expass\$sl=32\$A{43}\$/);
+            expect(result).toMatch(/^\$expass\$v=1&sl=32\$A{43}\$/);
         });
 
     });
@@ -360,7 +360,7 @@ describe('ExPass', () => {
         it('Should compare a string with a hash', async () => {
             const result = await expass.compare(
                 'password123',
-                '$expass$$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZMlZ6TXpJeFpISnZkM056WVE9PQ',
+                '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZMlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
                 { ...DefaultConfig }
             );
@@ -377,7 +377,7 @@ describe('ExPass', () => {
         it('Should return false if password is wrong', async () => {
             const result = await expass.compare(
                 'passwOrd123',
-                '$expass$$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZMlZ6TXpJeFpISnZkM056WVE9PQ',
+                '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZMlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
                 { ...DefaultConfig }
             );
@@ -388,12 +388,21 @@ describe('ExPass', () => {
         it('Should return false if hash is wrong', async () => {
             const result = await expass.compare(
                 'password123',
-                '$expass$$AAAAAAAAAAAAAAAAAAAAAA$BBBkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZMlZ6TXpJeFpISnZkM056WVE9Q',
+                '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$BBBkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZMlZ6TXpJeFpISnZkM056WVE9Q',
                 Buffer.from('secret'),
                 { ...DefaultConfig }
             );
 
             expect(result).toBe(false);
+        });
+
+        it('Should thorw an error if version is mismatch', async () => {
+            await expect(expass.compare(
+                'password123',
+                '$expass$v=666$AAAAAAAAAAAAAAAAAAAAAA$BBBkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZMlZ6TXpJeFpISnZkM056WVE9Q',
+                Buffer.from('secret'),
+                { ...DefaultConfig }
+            )).rejects.toThrow('Invalid version: 666');
         });
 
         it('Should throw an error if hash is invalid', async () => {
@@ -408,7 +417,7 @@ describe('ExPass', () => {
         it('Should throw an error if preHashAlgorithm is not allowed', async () => {
             await expect(expass.compare(
                 'password123',
-                '$expass$$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZMlZ6TXpJeFpISnZkM056WVE9PQ',
+                '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZMlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
                 { ...DefaultConfig, allowPreHashAlgorithms: ['sha1'] }
             )).rejects.toThrow('Not allowed preHashAlgorithm: sha256');
@@ -417,7 +426,7 @@ describe('ExPass', () => {
         it('Should throw an error if postHashAlgorithm is not allowed', async () => {
             await expect(expass.compare(
                 'password123',
-                '$expass$$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZMlZ6TXpJeFpISnZkM056WVE9PQ',
+                '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZMlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
                 { ...DefaultConfig, allowPostHashAlgorithms: ['sha1'] }
             )).rejects.toThrow('Not allowed postHashAlgorithm: sha256');
@@ -426,7 +435,7 @@ describe('ExPass', () => {
         it('Should throw an error if keyDerivationAlgorithm is not allowed', async () => {
             await expect(expass.compare(
                 'password123',
-                '$expass$$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
+                '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
                 { ...DefaultConfig, allowKeyDerivationAlgorithms: ['sha1'] }
             )).rejects.toThrow('Not allowed keyDerivationAlgorithm: sha256');
@@ -435,7 +444,7 @@ describe('ExPass', () => {
         it('Should throw an error if cipherAlgorithm is not allowed', async () => {
             await expect(expass.compare(
                 'password123',
-                '$expass$$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
+                '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
                 { ...DefaultConfig, allowCipherAlgorithms: ['aes-128'] }
             )).rejects.toThrow('Not allowed cipherAlgorithm: aes-256');
@@ -444,7 +453,7 @@ describe('ExPass', () => {
         it('Should throw an error if salt is to short', async () => {
             await expect(expass.compare(
                 'password123',
-                '$expass$$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
+                '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
                 { ...DefaultConfig, minSaltLength: 32 }
             )).rejects.toThrow('Salt length is too short: 16');
@@ -453,7 +462,7 @@ describe('ExPass', () => {
         it('Should throw an error if salt is to long', async () => {
             await expect(expass.compare(
                 'password123',
-                '$expass$$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
+                '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
                 { ...DefaultConfig, maxSaltLength: 8 }
             )).rejects.toThrow('Salt length is too long: 16');
@@ -462,7 +471,7 @@ describe('ExPass', () => {
         it('Should throw an error if power is to low', async () => {
             await expect(expass.compare(
                 'password123',
-                '$expass$$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
+                '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
                 { ...DefaultConfig, minPower: 16 }
             )).rejects.toThrow('Power is too low: 8');
@@ -471,7 +480,7 @@ describe('ExPass', () => {
         it('Should throw an error if power is to high', async () => {
             await expect(expass.compare(
                 'password123',
-                '$expass$$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
+                '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
                 { ...DefaultConfig, maxPower: 4 }
             )).rejects.toThrow('Power is too high: 8');
@@ -480,7 +489,7 @@ describe('ExPass', () => {
         it('Should throw an error if keyDerivationIterations is to low', async () => {
             await expect(expass.compare(
                 'password123',
-                '$expass$$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
+                '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
                 { ...DefaultConfig, minKeyDerivationIterations: 15000}
             )).rejects.toThrow('Key derivation iterations is too low: 10000');
@@ -489,7 +498,7 @@ describe('ExPass', () => {
         it('Should throw an error if keyDerivationIterations is to high', async () => {
             await expect(expass.compare(
                 'password123',
-                '$expass$$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
+                '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
                 { ...DefaultConfig, maxKeyDerivationIterations: 5000 }
             )).rejects.toThrow('Key derivation iterations is too high: 10000');
@@ -498,7 +507,7 @@ describe('ExPass', () => {
         it('Should throw an error if salt length mismatch', async () => {
             await expect(expass.compare(
                 'password123',
-                '$expass$sl=24$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
+                '$expass$v=1&sl=24$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
                 { ...DefaultConfig }
             )).rejects.toThrow('Salt length mismatch: 16 !== 24');
@@ -507,7 +516,7 @@ describe('ExPass', () => {
         it('Should throw an error if minEncodeBlockSize is to low', async () => {
             await expect(expass.compare(
                 'password123',
-                '$expass$$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
+                '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
                 { ...DefaultConfig, minEncodeBlockSize: 128 }
             )).rejects.toThrow('Encode block size is too low: 64');
@@ -516,7 +525,7 @@ describe('ExPass', () => {
         it('Should throw an error if maxEncodeBlockSize is to high', async () => {
             await expect(expass.compare(
                 'password123',
-                '$expass$$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
+                '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
                 { ...DefaultConfig, maxEncodeBlockSize: 32 }
             )).rejects.toThrow('Encode block size is too high: 64');

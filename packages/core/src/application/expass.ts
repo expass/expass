@@ -20,11 +20,17 @@ import { Cipher } from '../domain/cipher';
 @singleton()
 export class ExPass implements ExPassInterface {
 
+    private _version: string = '1';
+
     constructor(
         @inject('Packager') protected packager: Packager,
         @inject('Crypto') protected crypto: Crypto,
         @inject('Encoder') protected encoder: Encoder,
     ) {}
+
+    get version(): string {
+        return this._version;
+    }
 
     hash(data: string | Buffer, algorithm: HashAlgorithm): Buffer {
         if (typeof data === 'string') {
@@ -132,11 +138,15 @@ export class ExPass implements ExPassInterface {
             finalConfig,
         );
         
-        return this.packager.pack(salt, cipheredPayload, finalConfig);
+        return this.packager.pack(salt, cipheredPayload, {
+            version: this.version,
+            ...finalConfig
+        });
     }
 
     async compare(clearPassword: string, hash: string, secret: Buffer, config: ExPassConfigParams): Promise<boolean> {
         const {
+            version,
             body: cipheredPayload,
             salt,
             config: finalConfig} = this.packager.unpack(hash);
@@ -151,6 +161,10 @@ export class ExPass implements ExPassInterface {
             keyDerivationIterations,
             cipherAlgorithm,
         } = finalConfig;
+
+        if (version !== this.version) {
+            throw new Error(`Invalid version: ${version}`);
+        }
 
         if (config.allowPreHashAlgorithms && !config.allowPreHashAlgorithms.includes(preHashAlgorithm)) {
             throw new Error(`Not allowed preHashAlgorithm: ${preHashAlgorithm}`);

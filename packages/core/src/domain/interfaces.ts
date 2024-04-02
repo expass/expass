@@ -29,6 +29,10 @@ export interface ExPassConfigParams extends Partial<ExPassConfig> {
     maxKeyDerivationIterations?: number | null;
 }
 
+export interface VersionedExPassConfig extends ExPassConfig {
+    version: string;
+}
+
 export type ConfigFlag = keyof ExPassConfig;
 
 export type ConfigFlagRef<K extends ConfigFlag> = K;
@@ -36,6 +40,7 @@ export type ConfigFlagRef<K extends ConfigFlag> = K;
 export type ConfigFlagTypeRef<K extends ConfigFlag> = ExPassConfig[K];
 
 export interface ResumedExPassConfig {
+    v: string,
     pra?: ConfigFlagTypeRef<'preHashAlgorithm'>;
     poa?: ConfigFlagTypeRef<'postHashAlgorithm'>;
     sl?:  ConfigFlagTypeRef<'saltLength'>;
@@ -51,6 +56,7 @@ export type ResumedExPassConfigFlag = keyof ResumedExPassConfig;
 export type ResumedExPassConfigFlagRef<K extends ResumedExPassConfigFlag> = K;
 
 export interface ExPassPackage {
+    version: string;
     salt: Buffer;
     body: Buffer;
     config: ExPassConfig;

@@ -5,6 +5,7 @@ import { singleton } from 'tsyringe';
 import { 
     ExPassPackage,
     ExPassConfig,
+    VersionedExPassConfig,
     ConfigFlag,
     ConfigFlagRef,
     ConfigFlagTypeRef,
@@ -15,7 +16,9 @@ import {
 import { Packager as PackagerInterface } from '../domain/packager';
 import { DefaultConfig } from './defaultconfig';
 
-export const configMap: Record<ConfigFlag, ResumedExPassConfigFlag> = {
+type MapResumeFlag = keyof Omit<ResumedExPassConfig, 'v'>;
+
+export const configMap: Record<ConfigFlag, MapResumeFlag> = {
     preHashAlgorithm: 'pra',
     postHashAlgorithm: 'poa',
     saltLength: 'sl',
@@ -48,20 +51,25 @@ export class Packager implements PackagerInterface {
             .replace(/=+$/, '');
     }
 
-    pack(salt: Buffer, body: Buffer, config: ExPassConfig): string {
+    pack(salt: Buffer, body: Buffer, versionedConfig: VersionedExPassConfig): string {
         const saltStr = this._cleanBase64(salt.toString('base64'));
         const bodyStr = this._cleanBase64(body.toString('base64'));
+
+        const {
+            version,
+            ...config
+        } = versionedConfig;
 
         const ops: ResumedExPassConfig = Object.keys(configMap)
             .filter((key) => config[key as ConfigFlag] !== DefaultConfig[key as ConfigFlag])
             .reduce<ResumedExPassConfig>((acc, _key) => {
                 const key = _key as ConfigFlag;
                 const skey = configMap[key] as ResumedExPassConfigFlag;
-                if (key in config) {
-                    acc[skey] = config[key] as any;
-                }
-                return acc;
-            }, {})
+                return {
+                    ...acc,
+                    [skey]: config[key] as any,
+                };
+            }, { v: '1'})
         ;
 
         const opsStr = QS.stringify(ops as any);
@@ -86,19 +94,27 @@ export class Packager implements PackagerInterface {
             bodyStr,
         ] = parts.slice(2);
 
-        const ops = QS.parse(opsStr) as ResumedExPassConfig;
+        const readOps = QS.parse(opsStr);
+
+        if (!('v' in readOps)) {
+            throw new Error('Invalid hash format');
+        }
+
+        const ops: ResumedExPassConfig = readOps as unknown as ResumedExPassConfig;
+        const version = ops.v;
 
         const config: ExPassConfig = Object.keys(configMap)
             .reduce<ExPassConfig>((acc, _key) => {
                 const key : ConfigFlag = _key as ConfigFlag;
-                const skey : ResumedExPassConfigFlag = configMap[key];
+                const skey : keyof Omit<ResumedExPassConfig, 'v'> = configMap[key];
                 if (skey in ops && typeof ops[skey] !== 'undefined') {
                     const k: ConfigFlagRef<typeof key> = key;
                     let value : ConfigFlagTypeRef<typeof key> = ops[skey]!;
                     if (
                         k === 'saltLength' ||
                         k === 'power' ||
-                        k === 'keyDerivationIterations'
+                        k === 'keyDerivationIterations' ||
+                        k === 'encodeBlockSize'
                     ) {
                         value = parseInt(value as any, 10);
                     }
@@ -117,7 +133,7 @@ export class Packager implements PackagerInterface {
             throw new Error('Invalid hash format');
         }
 
-        return { salt, body, config };
+        return { version, salt, body, config };
     }
 
 }

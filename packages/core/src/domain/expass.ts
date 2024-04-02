@@ -7,6 +7,7 @@ import {
 } from './interfaces';
 
 export interface ExPass {
+    version: string;
     hash: (data: string | Buffer, algorithm: HashAlgorithm) => Buffer;
     hmac: (data: Buffer, key: Buffer, algorithm: HashAlgorithm) => Buffer;
     derivateSessionSalt: (salt: Buffer, preHash: Buffer, secret: Buffer, config: ExPassConfig) => Buffer;
