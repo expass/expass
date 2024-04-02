@@ -1,0 +1,5 @@
+coverage/**
+src/**/*
+tsconfig*
+*.spec.*
+__mocks__

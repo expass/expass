@@ -7,9 +7,11 @@
   "license": "GPL-2.0",
   "main": "lib/index.js",
   "scripts": {
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run test",
     "test": "npx jest",
     "clean": "npx rimraf lib",
-    "build": "npm run clean && npx tsc -b"
+    "build": "npm run clean && npx tsc -b --force"
   },
   "jest": {
     "testEnvironment": "node",
