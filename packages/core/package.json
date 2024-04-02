@@ -1,6 +1,6 @@
 {
   "name": "@expass/core",
-  "version": "0.1.0",
+  "version": "0.1.1-alpha.0",
   "description": "> TODO: description",
   "author": "Exos <oscar@gentisoft.com>",
   "homepage": "https://github.com/expass/expass",
@@ -28,5 +28,4 @@
       ".*\\.ts$": "ts-jest"
     }
   }
-
 }
