@@ -1,6 +1,6 @@
 {
   "name": "@expass/node",
-  "version": "0.1.1-alpha.0",
+  "version": "0.1.2-alpha.0",
   "description": "A modern and secure password hashing/encription library for node",
   "keywords": [
     "password",
@@ -24,7 +24,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@expass/core": "^0.1.1-alpha.0",
+    "@expass/core": "^0.1.2-alpha.0",
     "reflect-metadata": "^0.2.2",
     "tsyringe": "^4.8.0"
   },
