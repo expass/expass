@@ -98,4 +98,8 @@ export class NodeExPass implements NodeExPassInterface {
                 throw err;
             });
     }
+
+    isExPassHash(hash: string): boolean {
+        return this.#exPass.isExPassHash(hash);
+    }
 }

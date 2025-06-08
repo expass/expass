@@ -255,5 +255,14 @@ export class ExPass implements ExPassInterface {
         return this.crypto.secureCompare(encodedPassword, encodedSavedPassword);
     }
 
+    isExPassHash(hash: string): boolean {
+        try {
+            this.packager.unpack(hash);
+            return true;
+        } catch (_) {
+            return false;
+        }
+    }
+
 }
 
