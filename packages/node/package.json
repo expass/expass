@@ -1,11 +1,11 @@
 {
   "name": "@expass/node",
   "version": "0.1.2-alpha.0",
-  "description": "A modern and secure password hashing/encription library for node",
+  "description": "A modern and secure password hashing/encryption library for node",
   "keywords": [
     "password",
     "hashing",
-    "encription",
+    "encryption",
     "security",
     "scrypt"
   ],
