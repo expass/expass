@@ -16,4 +16,5 @@ export interface ExPass {
     decrypt: (data: Buffer, keyAndIv: KeyAndIv, config: ExPassConfig) => Buffer;
     encode: (data: string, secret: Buffer, config: Partial<ExPassConfig>) => Promise<string>;
     compare: (data: string, hash: string, secret: Buffer, config: ExPassConfigParams) => Promise<boolean>;
+    isExPassHash: (hash: string) => boolean;
 }

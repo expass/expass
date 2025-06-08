@@ -10,6 +10,8 @@ import { DefaultConfig } from './defaultconfig';
 import { Packager } from './packager';
 import { ExPass } from './expass';
 
+const valid = '$expass$v=1$fhuNdqUJe0hmYD7uGaAbmg$G2uVgUC0CnXoEy1lxs1BXuNd1sR9MDcP07b5.FxE1fGFMW7dDk_07eSEANZ.j5qX';
+
 describe('ExPass', () => {
     let container: typeof tsyContainer;
     let expass: ExPassInterface;
@@ -515,6 +517,16 @@ describe('ExPass', () => {
             )).rejects.toThrow('Encode block size is too high: 64');
         });
 
+    });
+
+    describe('#isExPassHash', () => {
+        it('Should return true for a valid hash', () => {
+            expect(expass.isExPassHash(valid)).toBe(true);
+        });
+
+        it('Should return false for an invalid hash', () => {
+            expect(expass.isExPassHash('invalid')).toBe(false);
+        });
     });
 
 });

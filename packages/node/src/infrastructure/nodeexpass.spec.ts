@@ -71,4 +71,16 @@ describe('NodeExPass', () => {
 
     });
 
+    describe('#isExPassHash', () => {
+        it('Should return true for a valid hash', () => {
+            const exPass = new NodeExPass(secret);
+            expect(exPass.isExPassHash(valid)).toBe(true);
+        });
+
+        it('Should return false for an invalid hash', () => {
+            const exPass = new NodeExPass(secret);
+            expect(exPass.isExPassHash('invalid')).toBe(false);
+        });
+    });
+
 });
