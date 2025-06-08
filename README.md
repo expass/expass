@@ -1,6 +1,6 @@
 # ExPass
 
-A secure password hashing/encription library for node and JavaScript.
+A secure password hashing/encryption library for node and JavaScript.
 
 > **WARNING**: This document refers to the whole project, for specific node
 > implementation see the
