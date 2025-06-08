@@ -38,6 +38,9 @@
     ],
     "transform": {
       ".*\\.ts$": "ts-jest"
+    },
+    "moduleNameMapper": {
+      "^@expass/core$": "<rootDir>/../core/src"
     }
   }
 }
