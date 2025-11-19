@@ -24,7 +24,7 @@ const expass = new ExPass('SECRET', {
 | preHashAlgorithm   | string | The algorithm used to pre-hash the password         | 'sha256'  |
 | postHashAlgorithm  | string | The algorithm used to post-hash the password        | 'sha256'  |
 | hmacAlgorithm      | string | The algorithm used to generate the HMAC             | 'sha256'  |
-| keyDerivationPower | number | The power of the scrypt for simetric key derivation | 10        |
+| keyDerivationPower | number | The power of the scrypt for symmetric key derivation | 10        |
 | cipherAlgorithm    | string | The algorithm used to encrypt the password          | 'aes-256' |
 
 ### Available hash algorithms _(for this implementation)_
