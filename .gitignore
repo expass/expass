@@ -2,3 +2,4 @@ node_modules/
 packages/*/coverage/**
 packages/*/lib/**
 packages/*/tsconfig.tsbuildinfo
+packages/*/build/**

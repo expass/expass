@@ -1,0 +1,25 @@
+.heroBanner {
+  background: radial-gradient(100% 100% at 0% 0%, #14b814 0%, #065f1a 100%);
+  padding: 6rem 0;
+  color: white;
+  text-align: center;
+}
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+.title {
+  font-size: 3rem;
+  margin: 0 0 0.5rem;
+}
+.subtitle {
+  opacity: 0.9;
+  margin-bottom: 2rem;
+}
+.buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
