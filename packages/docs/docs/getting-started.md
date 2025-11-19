@@ -17,7 +17,7 @@ npm install @expass/node
 ```ts
 import { NodeExpass } from '@expass/node';
 
-const SECRET = process.env['PASSWORD_SECRET'];
+const PASSWORD_SECRET = process.env['PASSWORD_SECRET'];
 
 // Create Expass instance
 const expass = new Expass(PASSWORD_SECRET);
