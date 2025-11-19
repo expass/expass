@@ -12,7 +12,7 @@ A secure password hashing/encryption library for node and JavaScript.
 * Use symmetric encryption for storing the password
 * Use global secret (a.k.a. pepper) for extra security
 * Algorithms can be replaced by custom ones
-* Wole library can be re-implemented 
+* Whole library can be re-implemented 
 
 ## Why?
 
