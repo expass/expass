@@ -2,7 +2,7 @@
 title: Validation
 ---
 
-You can validate and packed password by expass with the method `isExPassHash`:
+You can validate a packed password by expass with the method `isExPassHash`:
 
 ```typescript
 import { ExPass } from '@expass/node';
