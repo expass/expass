@@ -1,0 +1,26 @@
+{
+  "name": "@expass/docs",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Expass documentation site (Docusaurus)",
+  "scripts": {
+    "start": "npx docusaurus start",
+    "build": "npx docusaurus build",
+    "serve": "npx docusaurus serve",
+    "clear": "npx docusaurus clear",
+    "deploy": "npx docusaurus deploy"
+  },
+  "dependencies": {
+    "@docusaurus/core": "^3.5.2",
+    "@docusaurus/preset-classic": "^3.5.2",
+    "@docusaurus/theme-mermaid": "^3.9.1",
+    "@mermaid-js/layout-elk": "^0.1.9",
+    "clsx": "^2.1.1",
+    "prism-react-renderer": "^2.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "engines": {
+    "node": ">=18.0"
+  }
+}

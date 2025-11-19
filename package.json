@@ -10,7 +10,11 @@
     "test": "npx lerna run test",
     "clean": "npx lerna run clean",
     "build": "npx lerna run build",
-    "lerna": "npx lerna"
+    "lerna": "npx lerna",
+    "docs:start": "npm --workspace @expass/docs run start",
+    "docs:build": "npm --workspace @expass/docs run build",
+    "docs:serve": "npm --workspace @expass/docs run serve",
+    "docs:deploy": "npm --workspace @expass/docs run deploy"
   },
   "keywords": [
     "password",
