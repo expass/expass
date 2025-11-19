@@ -34,7 +34,7 @@ This library is designed to be secure, and to be easy to use.
 | Against rainbow tables | Very High | High     | Very High | Low    | Moderate |
 | Against brute force    | Very High | Very High     | Very High      | Low    | Moderate      |
 | Against dictionary     | Very High | Very High     | Very High      | Low    | Moderate      |
-| Against paralelization | High | Moderate      | High | Low    | Low      |
+| Against parallelization | High | Moderate      | High | Low    | Low      |
 | Against GPU            | Very High | High     | Very High      | Low    | Low      |
 
 ## Why scrypt?
