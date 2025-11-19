@@ -12,7 +12,8 @@ export default function Home(): JSX.Element {
         <div className={styles.container}>
           <img
             src="img/fingerprint-white.png"
-           />
+            alt="Fingerprint icon"
+          />
           <h1 className={styles.title}>Expass</h1>
           <p className={styles.subtitle}>Strong password encoding primitives for Node.js</p>
           <div className={styles.buttons}>
