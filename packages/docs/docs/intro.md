@@ -42,7 +42,7 @@ This library is designed to be secure, and to be easy to use.
 Scrypt is a key derivation function designed to be "memory-hard", but OWASP
 recommends use argon2, but scrypt is a good alternative.
 
-Whatever, I decided to use scrypt because it's native to node, agaist argon2
+Whatever, I decided to use scrypt because it's native to node, against argon2
 
 ## Encrypting a password
 
