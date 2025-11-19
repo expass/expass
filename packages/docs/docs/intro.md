@@ -8,7 +8,7 @@ A secure password hashing/encryption library for node and JavaScript.
 ## Features:
 
 * Pre-hash password
-* Use scrypt for anti-paralelization
+* Use scrypt for anti-parallelization
 * Use simetric encryption for storing the password
 * Use global secret (a.k.a. pepper) for extra security
 * Algorithms can be replaced by custom ones
