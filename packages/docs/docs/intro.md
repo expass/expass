@@ -31,10 +31,10 @@ This library is designed to be secure, and to be easy to use.
 | Pre-hash               | ✔️         | ❌       | ❌        | ❌     | ❌       |
 | Use salt               | ✔️         | ✔️        | ✔️         | ❌     | ✔️        |
 | Use pepper             | ✔️         | ❌       | ❌        | ❌     | ❌       |
-| Against rainbow tables | Very High | High     | Very High | Low    | Moderade |
-| Against brute force    | Very High | Very High     | Very High      | Low    | Moderade      |
-| Against dictionary     | Very High | Very High     | Very High      | Low    | Moderade      |
-| Against paralelization | High | Moderade      | High | Low    | Low      |
+| Against rainbow tables | Very High | High     | Very High | Low    | Moderate |
+| Against brute force    | Very High | Very High     | Very High      | Low    | Moderate      |
+| Against dictionary     | Very High | Very High     | Very High      | Low    | Moderate      |
+| Against paralelization | High | Moderate      | High | Low    | Low      |
 | Against GPU            | Very High | High     | Very High      | Low    | Low      |
 
 ## Why scrypt?
