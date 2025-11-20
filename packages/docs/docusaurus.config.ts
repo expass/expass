@@ -9,7 +9,7 @@ const config: Config = {
   // Production URL of your site
   url: 'https://expass.github.io',
   // Base URL for your project (GitHub Pages under /expass)
-  baseUrl: '/expass',
+  baseUrl: '/',
 
   // GitHub pages deployment config.
   organizationName: 'expass',
