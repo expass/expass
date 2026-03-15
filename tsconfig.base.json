@@ -9,8 +9,12 @@
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "rootDirs": [
+      "packages/core/src",
+      "packages/cli/src"
+    ],
     "paths": {
-      "@expass/core": ["packages/core/src"]
+      "@expass/core": ["packages/core/src/index.ts"]
     }
   }
 }
