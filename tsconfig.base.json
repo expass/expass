@@ -14,7 +14,7 @@
       "packages/cli/src"
     ],
     "paths": {
-      "@expass/core": ["packages/core/src/index.ts"]
+      "@expass/core": ["packages/core/src"]
     }
   }
 }

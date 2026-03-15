@@ -40,7 +40,8 @@
       ".*\\.ts$": "ts-jest"
     },
     "moduleNameMapper": {
-      "^@expass/core$": "<rootDir>/../core/src"
+      "^@expass/core$": "<rootDir>/../core/src",
+      "^@expass/core/(.*)$": "<rootDir>/../core/src/$1"
     }
   }
 }
