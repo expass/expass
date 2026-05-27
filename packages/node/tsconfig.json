@@ -2,9 +2,6 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "paths": {
-      "@expass/core": ["../core/src"]
-    },
     "outDir": "./lib",
     "rootDir": "./src",
     "composite": true
