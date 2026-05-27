@@ -11,7 +11,7 @@ export class ExPassVersionMismatchError extends Error implements ExPassErrorInte
 export class ExPassInvalidHashError extends Error implements ExPassErrorInterface {
   constructor(message: string = 'Invalid hash format') {
     super(message);
-    this.name = 'ExPassrInvalidHashError';
+    this.name = 'ExPassInvalidHashError';
   }
 }
 
