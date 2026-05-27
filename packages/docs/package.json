@@ -1,6 +1,6 @@
 {
   "name": "@expass/docs",
-  "version": "0.1.0",
+  "version": "0.1.2-alpha.1",
   "private": true,
   "description": "Expass documentation site (Docusaurus)",
   "scripts": {
