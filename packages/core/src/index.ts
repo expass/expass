@@ -15,13 +15,16 @@ export { DefaultConfig } from './application/defaultconfig';
 
 export * as interfaces from './domain/interfaces';
 
-export {
+export type {
     ExPassInterface,
     CipherInterface,
     CryptoInterface,
     EncoderInterface,
     HasherInterface,
     PackagerInterface,
+};
+
+export {
     ExPass,
     Packager,
 };
