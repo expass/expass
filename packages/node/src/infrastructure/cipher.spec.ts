@@ -74,7 +74,7 @@ describe('NodeCipher', () => {
             const iv = Buffer.from('drow'.repeat(4));
 
             expect(() => cipher.decrypt(data, key, iv))
-                .toThrowError(/bad decrypt/);
+                .toThrow(/bad decrypt/);
         });
 
         it('Should to fail to decrypt with wrong iv', () => {
@@ -84,7 +84,7 @@ describe('NodeCipher', () => {
             const iv = Buffer.from('drOw'.repeat(4));
 
             expect(() => cipher.decrypt(data, key, iv))
-                .toThrowError(/bad decrypt/);
+                .toThrow(/bad decrypt/);
         });
     });
 
