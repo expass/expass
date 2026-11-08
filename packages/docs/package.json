@@ -11,16 +11,17 @@
     "deploy": "npx docusaurus deploy"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.5.2",
-    "@docusaurus/preset-classic": "^3.5.2",
-    "@docusaurus/theme-mermaid": "^3.9.1",
+    "@docusaurus/core": "^3.10.2",
+    "@docusaurus/preset-classic": "^3.10.2",
+    "@docusaurus/theme-mermaid": "^3.10.2",
     "@mermaid-js/layout-elk": "^0.1.9",
     "clsx": "^2.1.1",
+    "d3-transition": "^3.0.2",
     "prism-react-renderer": "^2.3.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "engines": {
-    "node": ">=18.0"
+    "node": ">=20.0"
   }
 }
