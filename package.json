@@ -41,6 +41,26 @@
     "ts-node": "^10.9.2",
     "typescript": "npm:@typescript/typescript6@^6.0.2"
   },
+  "overrides": {
+    "nx": {
+      "undici": "^7.30.2"
+    },
+    "@docusaurus/core": {
+      "tinypool": "^2.2.0"
+    },
+    "serialize-javascript": "^7.1.4",
+    "sockjs": {
+      "uuid": "^11.1.1"
+    },
+    "mermaid": {
+      "katex": "^0.18.2"
+    },
+    "glob": "^14.0.4",
+    "minimatch": "^11.0.5",
+    "serve-handler": {
+      "minimatch": "3.1.5"
+    }
+  },
   "dependencies": {
     "reflect-metadata": "^0.2.2",
     "tsyringe": "^4.10.0"
