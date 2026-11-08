@@ -5,6 +5,6 @@ import {
 } from './infrastructure/nodeexpass';
 
 export {
-    Options as ExPassOptions,
+    type Options as ExPassOptions,
     NodeExPass as ExPass,
 };

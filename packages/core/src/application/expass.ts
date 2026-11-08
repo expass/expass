@@ -11,9 +11,9 @@ import {
 } from '../domain/interfaces';
 import { ExPassVersionMismatchError, ExPassForbidenParamValueError } from './errors';
 import { ExPass as ExPassInterface } from '../domain/expass';
-import { Encoder } from '../domain/encoder';
-import { Packager } from '../domain/packager';
-import { Crypto } from '../domain/crypto';
+import type { Encoder } from '../domain/encoder';
+import type { Packager } from '../domain/packager';
+import type { Crypto } from '../domain/crypto';
 import { Hasher } from '../domain/hasher';
 import { Cipher } from '../domain/cipher';
 

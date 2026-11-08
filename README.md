@@ -96,6 +96,17 @@ The options are:
 * aes-128
 * aes-256
 
+## Development
+
+Use Node.js 24 and install dependencies with `npm ci`.
+Run `npm run typecheck` to check library and test types, `npm test` to run tests,
+and `npm run build` to build the packages and documentation.
+
+Builds and type checks use native TypeScript 7 via the `@typescript/native` npm
+alias (`tsc`). The `typescript` alias provides the TypeScript 6 compatibility API
+required by `ts-jest` and `ts-node`; `tsc6` is available for comparison.
+Keep both aliases when updating the compiler until those tools support the native API.
+
 ## Why?
 
 I needed a secure way to store passwords in a database. Following the [best

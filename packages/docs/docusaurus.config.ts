@@ -18,7 +18,6 @@ const config: Config = {
   trailingSlash: false,
 
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
 
   i18n: {
     defaultLocale: 'en',
@@ -29,8 +28,15 @@ const config: Config = {
     '@docusaurus/theme-mermaid',
   ],
 
+  clientModules: [
+    require.resolve('./src/clientModules/mermaidTransitions.js'),
+  ],
+
   markdown: {
     mermaid: true,
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+    },
   },
 
   presets: [

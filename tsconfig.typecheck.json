@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rootDir": ".",
+    "paths": {
+      "@expass/core": ["./packages/core/src"]
+    }
+  },
+  "include": ["packages/core/src/**/*.ts", "packages/node/src/**/*.ts"]
+}
