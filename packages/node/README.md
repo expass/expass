@@ -1,85 +1,95 @@
-# ExPass for node
+# 🔐 ExPass for Node.js
 
-Save your passwords securely with ExPass. ExPass is a library that allows you
-to encrypt and compare passwords in a simple and secure way.
+Encode and verify passwords using scrypt, a random salt, and a shared pepper.
+ExPass encrypts the derived hash before packing it for storage; it does not
+provide recovery of the original password.
 
-This library uses the scrypt algorithm to hash the password, and then follow the
-official [OWASP Password Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html)
-recommendations to store the password.
+## ✨ Features
 
-> **Note:** This software is under revision and may have future changes.
+- Pre-hashing before password derivation.
+- scrypt with a configurable work factor.
+- A fresh random salt for each encoded password.
+- A shared secret (pepper) supplied by the application.
+- Symmetric encryption of the derived hash before storage.
+- A packed string containing the version, salt, encoding options, and encrypted payload.
+- Asynchronous password encoding and verification.
+- Configurable algorithms and limits on parameters accepted during verification.
 
-## Features
+## 💡 Why?
 
-* Use salt + pepper
-* Use scrypt algorithm _(Against GPU/FPGA/ASIC attacks)_
-* Add simetric encryption _(Against data breaches)_
-* Use global secret (a.k.a. pepper) for extra security
-* Customizable values
-* Easy to use
-* Modern and secure
-* Use Promises
+I created ExPass because I needed a way to store passwords in a database using
+password hashing, salts, and a separate application secret. The goal was to bring
+those steps together behind a small API for encoding and verifying passwords.
 
-## Installation
+scrypt provides the password derivation step through Node.js's built-in crypto
+module. The pepper adds an application secret that can be kept separate from the
+database, and the packed format keeps the information needed for verification
+alongside each encoded password.
+
+## 📥 Installation
 
 ```bash
-npm install @expass/node 
+npm install @expass/node
 ```
 
-## Usage
+## 🚀 Usage
 
-```JavaScript
+Set `PASSWORD_SECRET` to a randomly generated secret kept separately from your
+password database. Use the same secret to verify existing passwords.
+
+```javascript
 import { ExPass } from '@expass/node';
 
-const SECRET = 'UDxv1fCm4SQ9yMGN1h7cXxhseQ5B3b1J5FhJ26m4';
+async function main() {
+  const secret = process.env['PASSWORD_SECRET'];
+  if (!secret) {
+    throw new Error('PASSWORD_SECRET must be set');
+  }
 
-(async () => {
-    const expass = new ExPass(SECRET);
+  const expass = new ExPass(secret);
+  const encoded = await expass.encode('my_password');
 
-    const encoded = await expass.encode('my_password');
-    // $expass$v=1$fhuNdqUJe0hmYD7uGaAbmg$G2uVgUC0CnXoEy1lxs1BXuNd1sR9MDcP07b5.FxE1fGFMW7dDk_07eSEANZ.j5qX 
+  // Store encoded in the database, then verify at login:
+  const isValid = await expass.verify('my_password', encoded);
+  console.log(isValid); // true
+}
 
-    const isValid = await expass.verify('my_password', encoded);
-    // true
-
-})();
+main().catch(console.error);
 ```
 
-## Customize params
+Store the complete encoded string. `verify` returns `false` for a password
+mismatch; malformed encodings and other processing errors can throw.
 
-```JavaScript
-import { ExPass } from '@expass/node';
+## ⚙️ Options
 
-const SECRET = 'UDxv1fCm4SQ9yMGN1h7cXxhseQ5B3b1J5FhJ26m4';
+Pass options as the second argument to `new ExPass(secret, options)`.
 
-(async () => {
-    const expass = new ExPass(SECRET, {
-        power: 20,
-        saltLength: 32,
-    });
+| Option | Type | Description | Default |
+| --- | --- | --- | --- |
+| `power` | number | scrypt cost exponent: `N = 2 ** power` | `14` |
+| `encodeHashLength` | number | scrypt output length in bytes, before post-hashing | `64` |
+| `saltLength` | number | Random salt length in bytes | `16` |
+| `preHashAlgorithm` | string | Hash applied before scrypt | `'sha256'` |
+| `postHashAlgorithm` | string | Hash applied to the scrypt output | `'sha256'` |
+| `hmacAlgorithm` | string | HMAC used to derive the session salt | `'sha256'` |
+| `keyDerivationPower` | number | scrypt cost exponent for deriving the encryption key and IV | `10` |
+| `cipherAlgorithm` | string | AES-CBC variant used to encrypt the post-hash | `'aes-256'` |
 
-    const encoded = await expass.encode('my_password');
-})();
-```
+Supported hash algorithms are `sha1`, `sha256`, and `sha512`. Prefer `sha256` or
+`sha512` for new configurations. Supported cipher values are `aes-128` and
+`aes-256`; the Node.js implementation uses CBC mode.
 
-### Options
+Benchmark work factors under your expected workload. See the
+[customization guide](https://expass.js.org/docs/customization) for verification
+limits, and consult current
+[OWASP password-storage guidance](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html)
+when choosing parameters. The library's defaults do not establish compliance with
+that guidance.
 
-The options are:
+`isExPassHash` only checks whether a string can be unpacked. It does not verify a
+password or enforce allowed parameters. See the
+[validation guide](https://expass.js.org/docs/validation).
 
-| Option             | Type   | Description                                         | Default   |
-| ------             | ----   | -----------                                         | -------   |
-| power              | number | The power of the scrypt algorithm                   | 14        |
-| encodeHashLenght   | number | The block size used to encode the password          | 64        |
-| saltLength         | number | The length of the salt used in the scrypt algorithm | 16        |
-| preHashAlgorithm   | string | The algorithm used to pre-hash the password         | 'sha256'  |
-| postHashAlgorithm  | string | The algorithm used to post-hash the password        | 'sha256'  |
-| hmacAlgorithm      | string | The algorithm used to generate the HMAC             | 'sha256'  |
-| keyDerivationPower | number | The power of the scrypt for simetric key derivation | 10        |
-| cipherAlgorithm    | string | The algorithm used to encrypt the password          | 'aes-256' |
+## 🤝 Contributing
 
-## Contributing
-
-If you want to contribute to this project, you can fork this repository and make
-a pull request. You can also open an issue if you find a bug or have a
-suggestion.
-
+Open an issue or pull request at [expass/expass](https://github.com/expass/expass).

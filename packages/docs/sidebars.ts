@@ -13,6 +13,16 @@ const sidebars: SidebarsConfig = {
       ],
       collapsed: false,
     },
+    {
+      type: 'category',
+      label: '🤝 Support project',
+      items: [
+        'support-project/code-contribution',
+        'support-project/community-and-research',
+        'support-project/donate',
+      ],
+      collapsed: false,
+    },
   ],
 };
 
