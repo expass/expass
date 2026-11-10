@@ -25,12 +25,12 @@ export const configMap: Record<ConfigFlag, MapResumeFlag> = {
     hmacAlgorithm: 'h',
     saltLength: 'sl',
     power: 'p',
-    encodeHashLenght: 'el',
+    encodeHashLength: 'el',
     keyDerivationPower: 'kp',
     cipherAlgorithm: 'ca',
 }
 
-type ExtratedConfig = Partial<ExPassConfig>;
+type ExtractedConfig = Partial<ExPassConfig>;
 
 /**
  * Pack/Unpack password hashes
@@ -115,7 +115,7 @@ export class Packager implements PackagerInterface {
                         k === 'saltLength' ||
                         k === 'power' ||
                         k === 'keyDerivationPower' ||
-                        k === 'encodeHashLenght'
+                        k === 'encodeHashLength'
                     ) {
                         value = parseInt(value as any, 10);
                     }

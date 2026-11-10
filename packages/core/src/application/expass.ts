@@ -9,7 +9,7 @@ import {
     CipherAlgorithm,
     KeyAndIv,
 } from '../domain/interfaces';
-import { ExPassVersionMismatchError, ExPassForbidenParamValueError } from './errors';
+import { ExPassVersionMismatchError, ExPassForbiddenParamValueError } from './errors';
 import { ExPass as ExPassInterface } from '../domain/expass';
 import type { Encoder } from '../domain/encoder';
 import type { Packager } from '../domain/packager';
@@ -46,7 +46,7 @@ export class ExPass implements ExPassInterface {
         return hasher.hmac(data, key);
     }
 
-    derivateSessionSalt(salt: Buffer ,preHash: Buffer, secret: Buffer, config: ExPassConfig): Buffer {
+    deriveSessionSalt(salt: Buffer ,preHash: Buffer, secret: Buffer, config: ExPassConfig): Buffer {
         const hasher = this.crypto.createHasher(config.hmacAlgorithm);
         let secretSalt: Buffer = Buffer.alloc(0);
         // Add buffers until the salt was larger or equal to config
@@ -66,8 +66,8 @@ export class ExPass implements ExPassInterface {
         return secretSalt.slice(0, config.saltLength);
     }
 
-    async derivateCipherKeyIv(secretSalt: Buffer, secret: Buffer, config: ExPassConfig): Promise<KeyAndIv> {
-        return this.crypto.derivateKey(
+    async deriveCipherKeyIv(secretSalt: Buffer, secret: Buffer, config: ExPassConfig): Promise<KeyAndIv> {
+        return this.crypto.deriveKey(
             secretSalt,
             secret,
             config.cipherAlgorithm,
@@ -91,7 +91,7 @@ export class ExPass implements ExPassInterface {
             preHash,
             secretSalt,
             config.power,
-            config.encodeHashLenght,
+            config.encodeHashLength,
         );
 
         return postHasher.hash(encoded);
@@ -111,7 +111,7 @@ export class ExPass implements ExPassInterface {
         const salt = this.crypto.createSalt(finalConfig.saltLength);
 
         // Derivate secretSalt
-        const secretSalt = this.derivateSessionSalt(
+        const secretSalt = this.deriveSessionSalt(
             salt,
             preHash,
             secret,
@@ -126,7 +126,7 @@ export class ExPass implements ExPassInterface {
         );
 
         // Derivate cipher key and iv
-        const keyAndIv = await this.derivateCipherKeyIv(
+        const keyAndIv = await this.deriveCipherKeyIv(
             secretSalt,
             secret,
             finalConfig,
@@ -145,7 +145,7 @@ export class ExPass implements ExPassInterface {
         });
     }
 
-    async compare(clearPassword: string, hash: string, secret: Buffer, config: ExPassConfigParams): Promise<boolean> {
+    async verify(clearPassword: string, hash: string, secret: Buffer, config: ExPassConfigParams): Promise<boolean> {
         const {
             version,
             body: cipheredPayload,
@@ -158,7 +158,7 @@ export class ExPass implements ExPassInterface {
             hmacAlgorithm,
             saltLength,
             power,
-            encodeHashLenght,
+            encodeHashLength,
             keyDerivationPower,
             cipherAlgorithm,
         } = finalConfig;
@@ -168,55 +168,55 @@ export class ExPass implements ExPassInterface {
         }
 
         if (config.allowPreHashAlgorithms && !config.allowPreHashAlgorithms.includes(preHashAlgorithm)) {
-            throw new ExPassForbidenParamValueError(`Not allowed preHashAlgorithm: ${preHashAlgorithm}`);
+            throw new ExPassForbiddenParamValueError(`Not allowed preHashAlgorithm: ${preHashAlgorithm}`);
         } 
 
         if (config.allowPostHashAlgorithms && !config.allowPostHashAlgorithms.includes(postHashAlgorithm)) {
-            throw new ExPassForbidenParamValueError(`Not allowed postHashAlgorithm: ${postHashAlgorithm}`);
+            throw new ExPassForbiddenParamValueError(`Not allowed postHashAlgorithm: ${postHashAlgorithm}`);
         }
 
         if (config.allowHmacAlgorithms && !config.allowHmacAlgorithms.includes(hmacAlgorithm)) {
-            throw new ExPassForbidenParamValueError(`Not allowed hmacAlgorithm: ${hmacAlgorithm}`);
+            throw new ExPassForbiddenParamValueError(`Not allowed hmacAlgorithm: ${hmacAlgorithm}`);
         }
 
         if (config.allowCipherAlgorithms && !config.allowCipherAlgorithms.includes(cipherAlgorithm)) {
-            throw new ExPassForbidenParamValueError(`Not allowed cipherAlgorithm: ${cipherAlgorithm}`);
+            throw new ExPassForbiddenParamValueError(`Not allowed cipherAlgorithm: ${cipherAlgorithm}`);
         }
 
         if (config.minSaltLength && saltLength < config.minSaltLength) {
-            throw new ExPassForbidenParamValueError(`Salt length is too short: ${saltLength}`);
+            throw new ExPassForbiddenParamValueError(`Salt length is too short: ${saltLength}`);
         }
 
         if (config.maxSaltLength && saltLength > config.maxSaltLength) {
-            throw new ExPassForbidenParamValueError(`Salt length is too long: ${saltLength}`);
+            throw new ExPassForbiddenParamValueError(`Salt length is too long: ${saltLength}`);
         }
 
         if (config.minPower && power < config.minPower) {
-            throw new ExPassForbidenParamValueError(`Power is too low: ${power}`);
+            throw new ExPassForbiddenParamValueError(`Power is too low: ${power}`);
         }
 
         if (config.maxPower && power > config.maxPower) {
-            throw new ExPassForbidenParamValueError(`Power is too high: ${power}`);
+            throw new ExPassForbiddenParamValueError(`Power is too high: ${power}`);
         }
 
-        if (config.minEncodeHashLength && encodeHashLenght < config.minEncodeHashLength) {
-            throw new ExPassForbidenParamValueError(`Encode block size is too low: ${encodeHashLenght}`);
+        if (config.minEncodeHashLength && encodeHashLength < config.minEncodeHashLength) {
+            throw new ExPassForbiddenParamValueError(`Encode block size is too low: ${encodeHashLength}`);
         }
 
-        if (config.maxEncodeHashLength && encodeHashLenght > config.maxEncodeHashLength) {
-            throw new ExPassForbidenParamValueError(`Encode block size is too high: ${encodeHashLenght}`);
+        if (config.maxEncodeHashLength && encodeHashLength > config.maxEncodeHashLength) {
+            throw new ExPassForbiddenParamValueError(`Encode block size is too high: ${encodeHashLength}`);
         }
 
         if (config.minKeyDerivationPower && keyDerivationPower < config.minKeyDerivationPower) {
-            throw new ExPassForbidenParamValueError(`Key derivation power is too low: ${keyDerivationPower}`);
+            throw new ExPassForbiddenParamValueError(`Key derivation power is too low: ${keyDerivationPower}`);
         }
 
         if (config.maxKeyDerivationPower && keyDerivationPower > config.maxKeyDerivationPower) {
-            throw new ExPassForbidenParamValueError(`Key derivation power is too high: ${keyDerivationPower}`);
+            throw new ExPassForbiddenParamValueError(`Key derivation power is too high: ${keyDerivationPower}`);
         }
 
         if (salt.length !== saltLength) {
-            throw new ExPassForbidenParamValueError(`Salt length mismatch: ${salt.length} !== ${saltLength}`);
+            throw new ExPassForbiddenParamValueError(`Salt length mismatch: ${salt.length} !== ${saltLength}`);
         }
 
         // Pre-salt password
@@ -224,7 +224,7 @@ export class ExPass implements ExPassInterface {
             .hash(Buffer.from(clearPassword, 'utf8'));
 
         // Derivate secretSalt
-        const secretSalt = this.derivateSessionSalt(
+        const secretSalt = this.deriveSessionSalt(
             salt,
             preHash,
             secret,
@@ -232,7 +232,7 @@ export class ExPass implements ExPassInterface {
         );
 
         // Derivate cipher key and iv
-        const keyAndIv = await this.derivateCipherKeyIv(
+        const keyAndIv = await this.deriveCipherKeyIv(
             secretSalt,
             secret,
             finalConfig,

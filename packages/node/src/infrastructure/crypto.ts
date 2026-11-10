@@ -37,7 +37,7 @@ export class NodeCrypto implements CryptoInterface {
         return new NodeCipher(algorithm);
     }
 
-    async derivateKey(password: Buffer, salt: Buffer, algorithm: CipherAlgorithm, power: number): Promise<KeyAndIv> {
+    async deriveKey(password: Buffer, salt: Buffer, algorithm: CipherAlgorithm, power: number): Promise<KeyAndIv> {
 
         if (!cipherAlgorithmsKeyAndIVLengths[algorithm]) {
             throw new Error(`Unknown cipher algorithm: ${algorithm}`);

@@ -7,7 +7,7 @@ export const DefaultConfig: ExPassConfig = {
     hmacAlgorithm: 'sha256',
     saltLength: 16,
     power: 14,
-    encodeHashLenght: 64,
+    encodeHashLength: 64,
     keyDerivationPower: 10,
     cipherAlgorithm: 'aes-256'
 };

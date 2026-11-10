@@ -15,9 +15,9 @@ export class ExPassInvalidHashError extends Error implements ExPassErrorInterfac
   }
 }
 
-export class ExPassForbidenParamValueError extends Error implements ExPassErrorInterface {
-  constructor(message: string = 'Forbiden parameter value') {
+export class ExPassForbiddenParamValueError extends Error implements ExPassErrorInterface {
+  constructor(message: string = 'Forbidden parameter value') {
     super(message);
-    this.name = 'ExPassForbidenParamValueError';
+    this.name = 'ExPassForbiddenParamValueError';
   }
 }

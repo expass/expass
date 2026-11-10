@@ -19,11 +19,11 @@ describe('ExPassVersionMismatchError', () => {
 
 });
 
-describe('ExPassForbidenParamValueError', () => {
+describe('ExPassForbiddenParamValueError', () => {
     
     it('Should be a default message', () => {
-        const error = new errors.ExPassForbidenParamValueError();
-        expect(error.message).toBe('Forbiden parameter value');
+        const error = new errors.ExPassForbiddenParamValueError();
+        expect(error.message).toBe('Forbidden parameter value');
     });
 
 });
