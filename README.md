@@ -1,102 +1,122 @@
-# ExPass
+# 🔐 ExPass
 
-A secure password hashing/encryption library for node and JavaScript.
+Password encoding for Node.js using scrypt, a random salt, and a shared pepper.
+The derived hash is encrypted and packed into a string for storage; the original
+password is not encrypted for later recovery.
 
-> **WARNING**: This document refers to the whole project, for specific node
-> implementation see the
-> [@expass/node](https://www.npmjs.com/package/@expass/node) package.
+## ✨ Features
 
-## Features:
+- Pre-hashing before password derivation.
+- scrypt with a configurable work factor.
+- A fresh random salt for each encoded password.
+- A shared secret (pepper) supplied by the application.
+- Symmetric encryption of the derived hash before storage.
+- A packed string containing the version, salt, encoding options, and encrypted payload.
+- Asynchronous password encoding and verification.
+- Replaceable cryptographic components and custom backends through `@expass/core`.
 
-* Pre-hash password
-* Use scrypt for anti-paralelization
-* Use simetric encryption for storing the password
-* Use global secret (a.k.a. pepper) for extra security
-* Algorithms can be replaced by custom ones
-* Wole library can be re-implemented 
+## 💡 Why?
 
-## Installation
+I created ExPass because I needed a way to store passwords in a database using
+password hashing, salts, and a separate application secret. The goal was to bring
+those steps together behind a small API for encoding and verifying passwords.
 
-For node implementatio:
+scrypt provides the password derivation step through Node.js's built-in crypto
+module. The pepper adds an application secret that can be kept separate from the
+database, and the packed format keeps the information needed for verification
+alongside each encoded password.
+
+## ⚖️ How ExPass compares
+
+This table compares the Node.js implementation of ExPass with the `bcrypt` and
+`argon2` npm packages and Node.js's built-in `crypto.scrypt` API. It describes what
+each API provides out of the box; applications can add their own processing around
+these APIs.
+
+| Feature | ExPass (`@expass/node`) | `bcrypt` | `argon2` | Node.js `crypto.scrypt` |
+| --- | --- | --- | --- | --- |
+| Password derivation | scrypt | bcrypt | Argon2id by default | scrypt |
+| Salt handling | Generated automatically | Generated when a numeric cost is passed to `hash` | Generated automatically unless supplied | Application supplies the salt |
+| Pepper integration | Required constructor secret | Application implements it | Optional `secret` parameter | Application implements it |
+| Separate pre-hash step | Included | Application implements it if needed | Application implements it if needed | Application implements it if needed |
+| Encryption of the derived hash | Included (AES-CBC) | Application implements it if needed | Application implements it if needed | Application implements it if needed |
+| Stored result | ExPass string with version, options, salt, and encrypted payload | bcrypt string with version, cost, salt, and hash | Encoded string with algorithm, version, parameters, salt, and hash | Derived bytes; application chooses the storage format |
+| Cost controls | Password and encryption-key scrypt cost exponents | bcrypt cost factor | Memory, time, and parallelism | `N`, `r`, and `p` |
+
+ExPass combines password derivation, pepper handling, encryption, and packaging
+behind `encode` and `verify`. Using `crypto.scrypt` directly gives the application
+control over how those steps are assembled. The `bcrypt` and `argon2` packages
+also provide hashing and verification APIs with encoded storage formats.
+
+### 🛡️ Additional protection beyond password hashing
+
+ExPass combines scrypt with an application-held pepper and encryption of the
+derived hash. Unlike a basic bcrypt setup without a pepper, a stolen database
+alone does not contain everything needed to verify password guesses: the attacker
+also needs the application's secret, provided it remains confidential and separate
+from the database.
+
+These protections are built into ExPass, so applications can use them through a
+single encoding and verification API. Other implementations can also incorporate
+a pepper; ExPass provides this combination out of the box.
+
+Sources: [bcrypt API](https://github.com/kelektiv/node.bcrypt.js#usage),
+[node-argon2 usage](https://github.com/ranisalt/node-argon2#usage) and
+[secret parameter implementation](https://github.com/ranisalt/node-argon2/blob/master/argon2.cjs),
+and [Node.js scrypt API](https://nodejs.org/api/crypto.html#cryptoscryptpassword-salt-keylen-options-callback).
+
+## 📦 Packages
+
+- [`@expass/node`](https://www.npmjs.com/package/@expass/node): the Node.js implementation.
+- `@expass/core`: interfaces and building blocks for custom implementations.
+
+## 📥 Installation
 
 ```bash
 npm install @expass/node
 ```
 
-> Future implementations will be available for browser and other platforms.
+## 🚀 Usage
 
-## Usage
+Set `PASSWORD_SECRET` to a randomly generated secret stored separately from your
+password database. Keep it available for future verification.
 
-```JavaScript
+```javascript
 import { ExPass } from '@expass/node';
 
-const SECRET = 'Q6I1BIPZhTbd6G7XjVedePfUV3TllC';
+async function main() {
+  const secret = process.env['PASSWORD_SECRET'];
+  if (!secret) {
+    throw new Error('PASSWORD_SECRET must be set');
+  }
 
-(async () => {
-    const expass = new ExPass(SECRET);
+  const expass = new ExPass(secret);
+  const encoded = await expass.encode('my_password');
 
-    const password = 'my_password';
+  // Store encoded in the database, then verify at login:
+  const isValid = await expass.verify('my_password', encoded);
+  console.log(isValid); // true
+}
 
-    const encrypted = await expass.encode(password);
-    // $expass$UUJpNU11MUxuNGd...
-
-    const isValid = await expass.verify(password, encrypted);
-)();
+main().catch(console.error);
 ```
 
-For more information, see the documentation _(@TODO)_.
+A password mismatch returns `false`; malformed encodings and other processing
+errors can throw. Handle those errors at your authentication boundary.
 
-## Customization
+## ⚙️ Customization
 
-You can replace the algorithms used by the library, or even implement your own
-algorithms.
+The second constructor argument accepts encoding options and verification limits.
+For example, `new ExPass(secret, { power: 14, saltLength: 32 })` changes the random
+salt length. `power` is a scrypt exponent (`N = 2 ** power`), so increasing it raises
+CPU and memory costs exponentially.
 
-```JavaScript
+See the [full documentation](https://expass.js.org/docs/intro), including
+[options and verification limits](packages/docs/docs/customization.md),
+[format validation](packages/docs/docs/validation.md), and the
+[encoding flow](packages/docs/docs/intro.md#encoding-flow).
 
-import { ExPass } from '@expass/node';
-
-const SECRET = 'Q6I1BIPZhTbd6G7XjVedePfUV3TllC';
-
-(async () => {
-    const expass = new ExPass(SECRET, {
-        power: 14,
-        saltLength: 32,
-    });
-
-    const password = 'my_password';
-
-    const encrypted = await expass.encode(password);
-    // $expass$UUJpNU11MUxuNGd...
-
-    const isValid = await expass.verify(password, encrypted);
-)();
-```
-
-The options are:
-
-| Option             | Type   | Description                                         | Default   |
-| ------             | ----   | -----------                                         | -------   |
-| power              | number | The power of the scrypt algorithm                   | 14        |
-| encodeHashLenght   | number | The block size used to encode the password          | 64        |
-| saltLength         | number | The length of the salt used in the scrypt algorithm | 16        |
-| preHashAlgorithm   | string | The algorithm used to pre-hash the password         | 'sha256'  |
-| postHashAlgorithm  | string | The algorithm used to post-hash the password        | 'sha256'  |
-| hmacAlgorithm      | string | The algorithm used to generate the HMAC             | 'sha256'  |
-| keyDerivationPower | number | The power of the scrypt for simetric key derivation | 10        |
-| cipherAlgorithm    | string | The algorithm used to encrypt the password          | 'aes-256' |
-
-### Available hash algorithms _(for this implementation)_
-
-* sha1 _(not recommended)_
-* sha256
-* sha512
-
-### Available cipher algorithms _(for this implementation)_
-
-* aes-128
-* aes-256
-
-## Development
+## 🛠️ Development
 
 Use Node.js 24 and install dependencies with `npm ci`.
 Run `npm run typecheck` to check library and test types, `npm test` to run tests,
@@ -107,76 +127,13 @@ alias (`tsc`). The `typescript` alias provides the TypeScript 6 compatibility AP
 required by `ts-jest` and `ts-node`; `tsc6` is available for comparison.
 Keep both aliases when updating the compiler until those tools support the native API.
 
-## Why?
+## 🔒 Password-storage guidance
 
-I needed a secure way to store passwords in a database. Following the [best
-practices recommended by the
-OWASP](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html),
-and using modern algorithms, to avoid common attacks like rainbow tables, brute
-force, and dictionary attacks.
+scrypt is available through Node.js's built-in crypto module. Its memory cost
+helps make password guessing more expensive. Select parameters based on your
+application's workload and current
+[OWASP guidance](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html).
+The library's defaults are implementation defaults, not a claim of compliance.
 
-## What is the difference between this library and others?
-
-This library is designed to be secure, and to be easy to use.
-
-| Feature                | ExPass    | bcrypt   | scrypt    | hash   | pbkdf2   |
-| ---------              | :------:  | :------: | :------:  | :----: | :------: |
-| Pre-hash               | ✔️         | ❌       | ❌        | ❌     | ❌       |
-| Use salt               | ✔️         | ✔️        | ✔️         | ❌     | ✔️        |
-| Use pepper             | ✔️         | ❌       | ❌        | ❌     | ❌       |
-| Against rainbow tables | Very High | High     | Very High | Low    | Moderade |
-| Against brute force    | Very High | Very High     | Very High      | Low    | Moderade      |
-| Against dictionary     | Very High | Very High     | Very High      | Low    | Moderade      |
-| Against paralelization | High | Moderade      | High | Low    | Low      |
-| Against GPU            | Very High | High     | Very High      | Low    | Low      |
-
-## Why scrypt?
-
-Scrypt is a key derivation function designed to be "memory-hard", but OWASP
-recommends use argon2, but scrypt is a good alternative.
-
-Whatever, I decided to use scrypt because it's native to node, agaist argon2
-
-## Encrypting a password
-
-```mermaid
-graph TB
-    SECRET[/global_secret/]
-    CLEAR_PASSWORD[/clear_password/]
-    PASS_SECRET["pass_secret = hmac(hmac(preHash, salt), global_secret)"]
-    
-    C_SEED["seed = generateRandomSeed()"]
-    C_SECRET_SEED["secret_seed = hmac(seed, pass_secret)"]
-    C_KEY["key, iv = deriveKey(secret_seed, pass_secret)"]
-
-    R["encrypted_payload = encrypt(post_hash, key, iv)"]
-
-    Sa["salt = generateRandomSalt()"]
-    
-    Ha["preHash = hash(clear_password)"]
-
-    Ea["hash_password = scrypt(preHash, pass_secret)"]
-
-    Hb["post_hash = hash(hash_password)"]
-
-    CLEAR_PASSWORD --> Ha
-
-    SECRET --> PASS_SECRET
-    Ha --> PASS_SECRET
-    Sa --> PASS_SECRET
-
-    Ha --> Ea
-    PASS_SECRET --> Ea
-
-    Ea --> Hb
-
-    C_SEED --> C_SECRET_SEED
-    PASS_SECRET --> C_SECRET_SEED
-
-    C_SECRET_SEED --> C_KEY
-    PASS_SECRET --> C_KEY
-
-    C_KEY --> R
-    Hb --> R
-
-```
+The pepper must remain separate from the database. Changing or losing it prevents
+verification of existing encoded passwords; plan rotation explicitly.

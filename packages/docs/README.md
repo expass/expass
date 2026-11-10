@@ -1,32 +1,39 @@
-# Expass Docs
+# 📚 ExPass Docs
 
-This package contains the Docusaurus static site for Expass.
+This package contains the Docusaurus documentation site for ExPass.
 
-## Scripts
+## 🛠️ Local development
 
-- `npm run start` — local dev server with hot reload
-- `npm run build` — build static HTML into `build/`
-- `npm run serve` — serve the production build locally
-- `npm run deploy` — deploy to GitHub Pages (requires `GIT_USER`)
-
-## Deployment
-
-The config is set for GitHub Pages at `https://expass.github.io/expass/`.
-
-To deploy:
+From the repository root, use Node.js 24 and run:
 
 ```bash
-# from repo root (after installing deps)
+npm ci
+npm run docs:start
+```
+
+To build and preview the production site:
+
+```bash
+npm run docs:build
+npm run docs:serve
+```
+
+The output is written to `packages/docs/build/`. From `packages/docs`, the
+equivalent commands are `npm run start`, `npm run build`, and `npm run serve`.
+
+## 🌐 Deployment
+
+The GitHub Pages workflow builds the site on pushes to `develop` and deploys the
+artifact using GitHub Actions. The custom domain is `https://expass.js.org/`;
+Docusaurus uses `baseUrl: '/'`.
+
+Manual deployment is also available from the repository root:
+
+```bash
 npm run docs:build
 npm run docs:deploy
 ```
 
-Or from within this package:
-
-```bash
-npm --workspace @expass/docs run build
-npm --workspace @expass/docs run deploy
-```
-
-You may need to set `GIT_USER` and have push access to the `gh-pages` branch.
-
+Manual deployment requires GitHub credentials with push access to the `gh-pages`
+branch; Docusaurus may also require `GIT_USER`. It is separate from the Actions
+artifact deployment workflow.

@@ -46,7 +46,7 @@ describe('Packager', () => {
                 hmacAlgorithm: 'sha512',
                 saltLength: 32,
                 power: 10,
-                encodeHashLenght: 64,
+                encodeHashLength: 64,
                 keyDerivationPower: 16,
                 cipherAlgorithm: 'aes-128',
             };
@@ -104,7 +104,7 @@ describe('Packager', () => {
                     hmacAlgorithm: 'sha512',
                     saltLength: 32,
                     power: 10,
-                    encodeHashLenght: 64,
+                    encodeHashLength: 64,
                     keyDerivationPower: 10,
                     cipherAlgorithm: 'aes-128',
                 }

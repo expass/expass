@@ -35,13 +35,13 @@ export interface ExPassModuleFactoryParams {
     Packager?: new () => PackagerInterface;
 }
 
-export function ExPassModuleFactory (dependecies: ExPassModuleFactoryParams) : ExPassInterface {
+export function ExPassModuleFactory (dependencies: ExPassModuleFactoryParams) : ExPassInterface {
     const container = tsyringeContainer.createChildContainer();
 
-    container.register<CryptoInterface>('Crypto', { useClass: dependecies.Crypto });
-    container.register<EncoderInterface>('Encoder', { useClass: dependecies.Encoder });
-    if (dependecies.Packager) {
-        container.register<PackagerInterface>('Packager', { useClass: dependecies.Packager });
+    container.register<CryptoInterface>('Crypto', { useClass: dependencies.Crypto });
+    container.register<EncoderInterface>('Encoder', { useClass: dependencies.Encoder });
+    if (dependencies.Packager) {
+        container.register<PackagerInterface>('Packager', { useClass: dependencies.Packager });
     } else {
         container.register<PackagerInterface>('Packager', { useClass: Packager });
     }

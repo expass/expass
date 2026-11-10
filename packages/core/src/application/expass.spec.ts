@@ -89,10 +89,10 @@ describe('ExPass', () => {
 
     });
 
-    describe('#derivateSessionSalt', () => {
+    describe('#deriveSessionSalt', () => {
 
         it('Should derivate the session salt', () => {
-            const result = expass.derivateSessionSalt(
+            const result = expass.deriveSessionSalt(
                 Buffer.from('salt'),
                 Buffer.from('prehash'),
                 Buffer.from('secret'),
@@ -114,7 +114,7 @@ describe('ExPass', () => {
         });
 
         it('Should call createHasher with the given algorithm', () => {
-            expass.derivateSessionSalt(
+            expass.deriveSessionSalt(
                 Buffer.from('salt'),
                 Buffer.from('prehash'),
                 Buffer.from('secret'),
@@ -125,7 +125,7 @@ describe('ExPass', () => {
         });
 
         it('Should call hmac several times until the salt length is reached', () => {
-            const result = expass.derivateSessionSalt(
+            const result = expass.deriveSessionSalt(
                 Buffer.from('salt'),
                 Buffer.from('prehash'),
                 Buffer.from('secret'),
@@ -140,17 +140,17 @@ describe('ExPass', () => {
 
     });
 
-    describe('#derivateCipherKeyIv', () => {
+    describe('#deriveCipherKeyIv', () => {
 
         it('Should derivate the cipher key and iv', async () => {
-            const result = await expass.derivateCipherKeyIv(
+            const result = await expass.deriveCipherKeyIv(
                 Buffer.from('secretSalt'),
                 Buffer.from('secret'),
                 { ...DefaultConfig }
             );
 
-            expect(cryptoMock.derivateKey).toHaveBeenCalledTimes(1);
-            expect(cryptoMock.derivateKey).toHaveBeenCalledWith(
+            expect(cryptoMock.deriveKey).toHaveBeenCalledTimes(1);
+            expect(cryptoMock.deriveKey).toHaveBeenCalledWith(
                 Buffer.from('secretSalt'),
                 Buffer.from('secret'),
                 'aes-256',
@@ -163,14 +163,14 @@ describe('ExPass', () => {
         });
 
         it('Should call createHasher with the given params', async () => {
-            await expass.derivateCipherKeyIv(
+            await expass.deriveCipherKeyIv(
                 Buffer.from('secretSalt'),
                 Buffer.from('secret'),
                 { ...DefaultConfig, keyDerivationPower: 16, cipherAlgorithm: 'aes-128'}
             );
 
-            expect(cryptoMock.derivateKey).toHaveBeenCalledTimes(1);
-            expect(cryptoMock.derivateKey).toHaveBeenCalledWith(
+            expect(cryptoMock.deriveKey).toHaveBeenCalledTimes(1);
+            expect(cryptoMock.deriveKey).toHaveBeenCalledWith(
                 Buffer.from('secretSalt'),
                 Buffer.from('secret'),
                 'aes-128',
@@ -272,8 +272,8 @@ describe('ExPass', () => {
             expect(cryptoMock.createSalt).toHaveBeenCalledTimes(1);
             expect(cryptoMock.createSalt).toHaveBeenCalledWith(16);
 
-            expect(cryptoMock.derivateKey).toHaveBeenCalledTimes(1);
-            expect(cryptoMock.derivateKey).toHaveBeenCalledWith(
+            expect(cryptoMock.deriveKey).toHaveBeenCalledTimes(1);
+            expect(cryptoMock.deriveKey).toHaveBeenCalledWith(
                 expect.any(Buffer),
                 Buffer.from('secret'),
                 'aes-256',
@@ -327,8 +327,8 @@ describe('ExPass', () => {
             expect(cryptoMock.createSalt).toHaveBeenCalledTimes(1);
             expect(cryptoMock.createSalt).toHaveBeenCalledWith(32);
 
-            expect(cryptoMock.derivateKey).toHaveBeenCalledTimes(1);
-            expect(cryptoMock.derivateKey).toHaveBeenCalledWith(
+            expect(cryptoMock.deriveKey).toHaveBeenCalledTimes(1);
+            expect(cryptoMock.deriveKey).toHaveBeenCalledWith(
                 expect.any(Buffer),
                 expect.any(Buffer),
                 'aes-256',
@@ -341,10 +341,10 @@ describe('ExPass', () => {
 
     });
 
-    describe('#compare', () => {
+    describe('#verify', () => {
 
-        it('Should compare a string with a hash', async () => {
-            const result = await expass.compare(
+        it('Should verify a string with a hash', async () => {
+            const result = await expass.verify(
                 'password123',
                 '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZMlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
@@ -361,7 +361,7 @@ describe('ExPass', () => {
         });
 
         it('Should return false if password is wrong', async () => {
-            const result = await expass.compare(
+            const result = await expass.verify(
                 'passwOrd123',
                 '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZMlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
@@ -372,7 +372,7 @@ describe('ExPass', () => {
         });
 
         it('Should return false if hash is wrong', async () => {
-            const result = await expass.compare(
+            const result = await expass.verify(
                 'password123',
                 '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$BBBkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZMlZ6TXpJeFpISnZkM056WVE9Q',
                 Buffer.from('secret'),
@@ -383,7 +383,7 @@ describe('ExPass', () => {
         });
 
         it('Should thorw an error if version is mismatch', async () => {
-            await expect(expass.compare(
+            await expect(expass.verify(
                 'password123',
                 '$expass$v=666$AAAAAAAAAAAAAAAAAAAAAA$BBBkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZMlZ6TXpJeFpISnZkM056WVE9Q',
                 Buffer.from('secret'),
@@ -392,7 +392,7 @@ describe('ExPass', () => {
         });
 
         it('Should throw an error if hash is invalid', async () => {
-            await expect(expass.compare(
+            await expect(expass.verify(
                 'password123',
                 'invalidhash',
                 Buffer.from('secret'),
@@ -401,7 +401,7 @@ describe('ExPass', () => {
         });
 
         it('Should throw an error if preHashAlgorithm is not allowed', async () => {
-            await expect(expass.compare(
+            await expect(expass.verify(
                 'password123',
                 '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZMlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
@@ -410,7 +410,7 @@ describe('ExPass', () => {
         });
 
         it('Should throw an error if postHashAlgorithm is not allowed', async () => {
-            await expect(expass.compare(
+            await expect(expass.verify(
                 'password123',
                 '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZMlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
@@ -419,7 +419,7 @@ describe('ExPass', () => {
         });
 
         it('Should throw an error if hmacAlgorithm is not allowed', async () => {
-            await expect(expass.compare(
+            await expect(expass.verify(
                 'password123',
                 '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
@@ -428,7 +428,7 @@ describe('ExPass', () => {
         });
 
         it('Should throw an error if cipherAlgorithm is not allowed', async () => {
-            await expect(expass.compare(
+            await expect(expass.verify(
                 'password123',
                 '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
@@ -437,7 +437,7 @@ describe('ExPass', () => {
         });
 
         it('Should throw an error if salt is to short', async () => {
-            await expect(expass.compare(
+            await expect(expass.verify(
                 'password123',
                 '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
@@ -446,7 +446,7 @@ describe('ExPass', () => {
         });
 
         it('Should throw an error if salt is to long', async () => {
-            await expect(expass.compare(
+            await expect(expass.verify(
                 'password123',
                 '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
@@ -455,7 +455,7 @@ describe('ExPass', () => {
         });
 
         it('Should throw an error if power is to low', async () => {
-            await expect(expass.compare(
+            await expect(expass.verify(
                 'password123',
                 '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
@@ -464,7 +464,7 @@ describe('ExPass', () => {
         });
 
         it('Should throw an error if power is to high', async () => {
-            await expect(expass.compare(
+            await expect(expass.verify(
                 'password123',
                 '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
@@ -473,7 +473,7 @@ describe('ExPass', () => {
         });
 
         it('Should throw an error if keyDerivationPower is to low', async () => {
-            await expect(expass.compare(
+            await expect(expass.verify(
                 'password123',
                 '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
                 Buffer.from('secret'),
@@ -482,7 +482,7 @@ describe('ExPass', () => {
         });
 
         it('Should throw an error if keyDerivationPower is to high', async () => {
-            await expect(expass.compare(
+            await expect(expass.verify(
                 'password123',
                 '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
                 Buffer.from('secret'),
@@ -491,7 +491,7 @@ describe('ExPass', () => {
         });
 
         it('Should throw an error if salt length mismatch', async () => {
-            await expect(expass.compare(
+            await expect(expass.verify(
                 'password123',
                 '$expass$v=1&sl=24$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
@@ -500,7 +500,7 @@ describe('ExPass', () => {
         });
 
         it('Should throw an error if minEncodeHashLength is to low', async () => {
-            await expect(expass.compare(
+            await expect(expass.verify(
                 'password123',
                 '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),
@@ -509,7 +509,7 @@ describe('ExPass', () => {
         });
 
         it('Should throw an error if maxEncodeHashLength is to high', async () => {
-            await expect(expass.compare(
+            await expect(expass.verify(
                 'password123',
                 '$expass$v=1$AAAAAAAAAAAAAAAAAAAAAA$YjNkemMyRndNekl4WkhKdmQzTnpZWEF6TWpGa2NtOTNjM05oY0RNeU1XUnliM2R6YzJGd016SXhaSEp2ZDNOemRHVnlZlZ6TXpJeFpISnZkM056WVE9PQ',
                 Buffer.from('secret'),

@@ -9,7 +9,7 @@ export interface ExPassConfig {
     hmacAlgorithm: HashAlgorithm;
     saltLength: number;
     power: number;
-    encodeHashLenght: number;
+    encodeHashLength: number;
     keyDerivationPower: number;
     cipherAlgorithm: CipherAlgorithm;
 }
@@ -46,7 +46,7 @@ export interface ResumedExPassConfig {
     h?: ConfigFlagTypeRef<'hmacAlgorithm'>;
     sl?:  ConfigFlagTypeRef<'saltLength'>;
     p?:   ConfigFlagTypeRef<'power'>;
-    el?: ConfigFlagTypeRef<'encodeHashLenght'>;
+    el?: ConfigFlagTypeRef<'encodeHashLength'>;
     kp?: ConfigFlagTypeRef<'keyDerivationPower'>;
     ca?:  ConfigFlagTypeRef<'cipherAlgorithm'>;
 }

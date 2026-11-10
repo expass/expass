@@ -9,6 +9,17 @@ describe('NodeExPass', () => {
     const secret = 'UDxv1fCm4SQ9yMGN1h7cXxhseQ5B3b1J5FhJ26m4';
 
     describe('#encode', () => {
+        it('Should encode and verify with a custom encodeHashLength', async () => {
+            const exPass = new NodeExPass(secret, { encodeHashLength: 32 });
+            const hash = await exPass.encode('password');
+
+            expect(hash.split('$')[2]).toContain('el=32');
+            await expect(new NodeExPass(secret).verify('password', hash)).resolves.toBe(true);
+            await expect(new NodeExPass(secret, {
+                maxEncodeHashLength: 16,
+            }).verify('password', hash)).rejects.toThrow('Encode block size is too high');
+        });
+
         it('Should return a hash with basic configuration', async () => {
             const exPass = new NodeExPass(secret);
             const hash = await exPass.encode('password');

@@ -84,7 +84,7 @@ export class NodeExPass implements NodeExPassInterface {
     }
 
     async verify(password: string, hash: string): Promise<boolean> {
-        return this.#exPass.compare(
+        return this.#exPass.verify(
             password,
             hash,
             this.#secret,

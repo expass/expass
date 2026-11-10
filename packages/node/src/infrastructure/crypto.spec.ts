@@ -32,10 +32,10 @@ describe('NodeCrypto', () => {
         });
     });
 
-    describe('derivateKey', () => {
+    describe('deriveKey', () => {
         it('Should return a key and iv for aes-256', async () => {
             const crypto = new NodeCrypto();
-            const keyIv = await crypto.derivateKey(
+            const keyIv = await crypto.deriveKey(
                 Buffer.from('password'),
                 Buffer.from('salt'),
                 'aes-256',
@@ -54,7 +54,7 @@ describe('NodeCrypto', () => {
 
         it('Should return a key and iv for aes-128', async () => {
             const crypto = new NodeCrypto();
-            const keyIv = await crypto.derivateKey(
+            const keyIv = await crypto.deriveKey(
                 Buffer.from('password'),
                 Buffer.from('salt'),
                 'aes-128',
@@ -73,7 +73,7 @@ describe('NodeCrypto', () => {
 
         it('Should throw an error if algorithm is unknown', async () => {
             const crypto = new NodeCrypto();
-            await expect(crypto.derivateKey(
+            await expect(crypto.deriveKey(
                 Buffer.from('password'),
                 Buffer.from('salt'),
                 'unknown' as CipherAlgorithm,
